@@ -3,14 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>前田真由美 | Portfolio</title>
+    <meta
+      name="description"
+      content="職業訓練校でWebアプリ開発を学ぶ前田真由美のポートフォリオサイトです。制作物やスキルを紹介しています。"
+    />
     <!-- Google Fonts（Webフォント）を読み込む -->
     <!-- preconnect でGoogleサーバーへの接続を先に確立しておく -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- フォント本体のCSS。style.cssより前に書いてフォントDLを早期に開始する -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&family=Yusei+Magic&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./style.css" />
@@ -21,11 +25,15 @@
       <div class="header-inner">
         <!-- ロゴ -->
         <h1 class="logo">
-          <a href="#">KOJI<span class="gradient-text">ANDO</span></a>
+          <a href="#">まえだ<span class="gradient-text">まゆみ</span></a>
         </h1>
 
         <!-- ハンバーガーボタン（スマホ専用） -->
-        <button class="nav-toggle js-nav-toggle" aria-label="メニューを開く">
+        <button
+          class="nav-toggle js-nav-toggle"
+          aria-label="メニューを開く"
+          aria-expanded="false"
+        >
           <span></span>
           <span></span>
           <span></span>
@@ -87,18 +95,21 @@
 
             <!-- テキストエリア -->
             <div class="about-text">
-              <h3>創造力とコードで、<br />想いをカタチにする。</h3>
+              <h3>未経験から、<br />Web開発の世界へ。</h3>
               <p>
-                現在、Webデザイナーを目指してHTML/CSS/JavaScriptを学習中です。
+                これまでとは異なる分野から一念発起し、Webアプリ開発の世界へキャリアチェンジすることを決意しました。現在は職業訓練校「初歩から始めるウエブアプリ開発科」で、HTML/CSS・JavaScriptを中心に学び、React・Next.jsを使った開発にも取り組んでいます。最近ではAIアプリ構築ツールのDifyの学習も始めました。訓練修了まで残り2ヶ月、着実にスキルを積み上げています。
+              </p>
+              <p>
+                初心者だからこそ気づける「使う人にとってのわかりやすさ」を大切にしながら、一つひとつの技術を着実に身につけているところです。
               </p>
               <div class="profile-details">
                 <dl>
                   <dt>Name</dt>
-                  <dd>Your Name</dd>
+                  <dd>まえだ まゆみ</dd>
                   <dt>Location</dt>
-                  <dd>Tokyo, Japan</dd>
+                  <dd>Osaka, Japan</dd>
                   <dt>Interest</dt>
-                  <dd>UI/UX Design, Front-end</dd>
+                  <dd>Web開発, フロントエンド</dd>
                 </dl>
               </div>
             </div>
@@ -113,15 +124,14 @@
               <div class="skill-icon gradient-circle">🖥️</div>
               <h4 class="skill-name">Design</h4>
               <p class="skill-desc">
-                Figma, Illustrator,
-                Photoshopを使用してUIデザインを作成できます。
+                Figmaを使ったUI設計を授業で学習中です。実務経験はまだありませんが、伝わりやすい画面構成を意識して取り組んでいます。
               </p>
             </div>
             <div class="skill-card">
               <div class="skill-icon gradient-circle">⌨️</div>
               <h4 class="skill-name">Coding</h4>
               <p class="skill-desc">
-                HTML5, CSS3, JavaScriptを用いたレスポンシブなマークアップ。
+                HTML5, CSS3, JavaScriptを基礎に、React・Next.jsを用いたアプリ開発を学習中です。
               </p>
             </div>
             <div class="skill-card">
@@ -148,7 +158,7 @@
         </div>
       </section>
       <!-- モーダル（ポップアップ）本体。中身はJavaScriptで動的に入れる -->
-      <div class="modal js-modal" aria-hidden="true">
+      <div class="modal js-modal" role="dialog" aria-modal="true" aria-hidden="true">
         <div class="modal-overlay js-modal-close-trigger"></div>
         <div class="modal-dialog">
           <button class="modal-close js-modal-close" aria-label="閉じる">
@@ -171,9 +181,10 @@
             <!-- インライン SVG でアイコンを表示します。CDN 不要で外部依存がありません。 -->
             <!-- fill="currentColor" により CSS の color 値が SVG の塗り色に継承されます。 -->
             <!-- aria-hidden="true" はリンクに aria-label があるため二重読み上げを防ぎます。 -->
+            <!-- X・Instagramはアカウントを使い始めたらhref="#"を実際のURLに差し替えてください -->
             <a href="#" aria-label="X (Twitter)">
               <svg
-                xmlns="<http://www.w3.org/2000/svg>"
+                xmlns="http://www.w3.org/2000/svg"
                 width="22"
                 height="22"
                 fill="currentColor"
@@ -187,7 +198,7 @@
             </a>
             <a href="#" aria-label="Instagram">
               <svg
-                xmlns="<http://www.w3.org/2000/svg>"
+                xmlns="http://www.w3.org/2000/svg"
                 width="22"
                 height="22"
                 fill="currentColor"
@@ -199,9 +210,14 @@
                 />
               </svg>
             </a>
-            <a href="#" aria-label="GitHub">
+            <a
+              href="https://github.com/coo-07"
+              aria-label="GitHub"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <svg
-                xmlns="<http://www.w3.org/2000/svg>"
+                xmlns="http://www.w3.org/2000/svg"
                 width="22"
                 height="22"
                 fill="currentColor"
@@ -216,7 +232,7 @@
           </div>
         </div>
         <p class="copyright">
-          &copy; <span id="year"></span> Your Name. All Rights Reserved.
+          &copy; <span id="year"></span> まえだまゆみ. All Rights Reserved.
         </p>
       </div>
     </footer>

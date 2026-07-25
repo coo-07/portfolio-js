@@ -37,9 +37,10 @@ if (navToggle && nav) {
   navToggle.addEventListener('click', () => {
     navToggle.classList.toggle('active');
     nav.classList.toggle('active');
-    document.body.style.overflow = nav.classList.contains('active')
-      ? 'hidden'
-      : '';
+    const isOpen = nav.classList.contains('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    // 開閉状態をaria-expandedに反映（スクリーンリーダー対応）
+    navToggle.setAttribute('aria-expanded', String(isOpen));
   });
   //グローバルメニュー内のリンクがクリックされたら
   navLinks.forEach((link) => {
@@ -47,6 +48,7 @@ if (navToggle && nav) {
       navToggle.classList.remove('active');
       nav.classList.remove('active');
       document.body.style.overflow = '';
+      navToggle.setAttribute('aria-expanded', 'false');
     });
   });
 }
@@ -165,38 +167,32 @@ if (pageTopBtn) {
 const worksData = [
   {
     id: 'work-1',
-    title: '架空のカフェサイト',
-    category: 'Web Design / Coding',
-    image: 'https://picsum.photos/seed/portfolio1/800/500',
-    imageClass: 'bg-grad-1', // image が null のときのフォールバック
-    desc: 'ターゲット層に合わせた温かみのあるデザインと、スムーズなアニメーションを取り入れた架空のカフェサイトです。HTML/CSS/JSで実装しました。',
+    title: '職務経歴書作成AI',
+    category: 'Dify / チャットフロー',
+    status: '制作中',
+    image: null,
+    imageClass: 'bg-grad-1',
+    desc: 'ジョブカードや履歴書、過去の職務経歴書をもとに、見やすい形式の職務経歴書を自動で作成するチャットフロー型のAIアプリです。',
     link: '#',
   },
   {
     id: 'work-2',
-    title: 'タスク管理アプリのUI',
-    category: 'UI Design',
-    image: null, // 画像なし → グラデーションで表示
+    title: 'AI会議室',
+    category: 'Dify / チャットフロー',
+    status: '制作中',
+    image: null,
     imageClass: 'bg-grad-2',
-    desc: '使いやすさを第一に考えたタスク管理アプリのUIデザインです。Figmaを使用して、直感的な操作ができる画面構成を作成しました。',
+    desc: 'お題を投げかけると、AI同士が会議形式で議論してくれるチャットフローアプリです。現在は1種類の会議形式のみですが、今後3種類の会議フローから選べるように拡張予定です。',
     link: '#',
   },
   {
     id: 'work-3',
-    title: 'キャンペーンバナー制作',
-    category: 'Banner Design',
+    title: 'grill-me',
+    category: 'Dify / チャットフロー',
+    status: '制作中',
     image: null,
     imageClass: 'bg-grad-3',
-    desc: 'SNS向けのキャンペーンバナーです。目を引く配色と、伝えたい情報が瞬時に伝わるレイアウトを心がけて制作しました。',
-    link: '#',
-  },
-  {
-    id: 'work-4',
-    title: '個人ポートフォリオサイト',
-    category: 'Web Design',
-    image: null,
-    imageClass: 'bg-grad-4',
-    desc: '自身のスキルや実績を伝えるためのポートフォリオサイトです。グラデーションやマイクロインタラクションを取り入れています。',
+    desc: 'ユーザーのアイデアや計画について、AIが1つずつ質問を重ねていくことで、内容を具体的に整理・言語化していくチャットフロー型アプリです。',
     link: '#',
   },
 ];
@@ -214,6 +210,11 @@ if (worksGrid) {
       ? `<img src="${work.image}" alt="${work.title}のサムネイル">`
       : `<div class="thumb-placeholder ${work.imageClass}">Project ${index + 1}</div>`;
 
+    // status（制作中など）があればバッジHTMLを作る
+    const statusBadgeHtml = work.status
+      ? `<span class="work-status-badge">${work.status}</span>`
+      : '';
+
     // document.createElement() で新しい button 要素を作成する
     const card = document.createElement('button');
     card.className = 'work-card js-modal-open';
@@ -222,7 +223,7 @@ if (worksGrid) {
     card.dataset.index = index;
 
     card.innerHTML = `
-            <div class="work-thumb">${thumbHtml}</div>
+            <div class="work-thumb">${thumbHtml}${statusBadgeHtml}</div>
             <div class="work-info">
                 <p class="work-category">${work.category}</p>
                 <h4 class="work-title">${work.title}</h4>
@@ -257,9 +258,12 @@ function renderModal(index) {
   const work = worksData[index];
 
   if (work) {
+    const statusBadgeHtml = work.status
+      ? `<span class="work-status-badge modal-status-badge">${work.status}</span>`
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
-                ${renderThumb(work)}
+                <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
                 <p class="work-category" style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">${work.category}</p>
                 <h3>${work.title}</h3>
                 <p>${work.desc}</p>
@@ -296,6 +300,7 @@ function renderModal(index) {
     }
 
     modal.classList.add('is-active');
+    modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 }
@@ -326,6 +331,7 @@ if (modal) {
   modalCloseBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       modal.classList.remove('is-active');
+      modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     });
   });
@@ -334,6 +340,7 @@ if (modal) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.classList.contains('is-active')) {
       modal.classList.remove('is-active');
+      modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     }
   });
