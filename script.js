@@ -286,6 +286,11 @@ function renderModal(index) {
     const presentationLinkHtml = work.presentationLink
       ? `<a href="${work.presentationLink}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">企画資料を見る</a>`
       : '';
+    // work.link が外部URL（http/https）の場合のみ別タブで開く（# はサイト内遷移なので対象外）
+    const isExternalLink = /^https?:\/\//.test(work.link);
+    const viewProjectAttrs = isExternalLink
+      ? ' target="_blank" rel="noopener noreferrer"'
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
@@ -293,7 +298,7 @@ function renderModal(index) {
                 <h3>${work.title}</h3>
                 <p>${work.desc}</p>
                 <div class="modal-links">
-                    <a href="${work.link}" class="btn btn-primary">View Project</a>
+                    <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>View Project</a>
                     ${presentationLinkHtml}
                 </div>
                 <div class="modal-navigation">
