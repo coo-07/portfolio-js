@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>企画資料 | やさしい在庫管理</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    background: #fafafa;
+  }
+
+  /* 上部の固定戻るバー */
+  .back-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 20px;
+    background: linear-gradient(to right, #ff7a33 0%, #d62839 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .back-bar a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.2s ease;
+  }
+
+  .back-bar a:hover {
+    opacity: 0.85;
+    text-decoration: underline;
+  }
+
+  /* 戻るバーの高さ分を除いた残り高さいっぱいにPDFを表示 */
+  .pdf-frame {
+    display: block;
+    width: 100%;
+    height: calc(100dvh - 52px);
+    border: none;
+  }
+</style>
+</head>
+<body>
+  <div class="back-bar">
+    <a href="https://coo-portfolio.vercel.app">&larr; ポートフォリオに戻る</a>
+  </div>
+  <iframe
+    class="pdf-frame"
+    src="inventory-presentation.pdf"
+    title="やさしい在庫管理 企画発表資料"
+  ></iframe>
+</body>
+</html>

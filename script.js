@@ -174,7 +174,7 @@ const worksData = [
     imageClass: 'bg-grad-1',
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
-    presentationLink: 'docs/inventory-presentation.pdf',
+    presentationLink: 'docs/inventory-presentation.html',
   },
   {
     id: 'work-2',
