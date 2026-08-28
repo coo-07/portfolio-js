@@ -167,32 +167,53 @@ if (pageTopBtn) {
 const worksData = [
   {
     id: 'work-1',
-    title: '職務経歴書作成AI',
-    category: 'Dify / チャットフロー',
-    status: '制作中',
+    title: 'やさしい在庫管理',
+    category: 'Web App',
+    status: '完成',
     image: null,
     imageClass: 'bg-grad-1',
-    desc: 'ジョブカードや履歴書、過去の職務経歴書をもとに、見やすい形式の職務経歴書を自動で作成するチャットフロー型のAIアプリです。',
-    link: '#',
+    desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
+    link: 'https://coo-zaiko-kanri.vercel.app',
+    presentationLink: 'docs/inventory-presentation.pdf',
   },
   {
     id: 'work-2',
-    title: 'AI会議室',
-    category: 'Dify / チャットフロー',
+    title: '学習ナレッジ活用ボット',
+    category: 'DIFY / チャットフロー',
     status: '制作中',
     image: null,
     imageClass: 'bg-grad-2',
-    desc: 'お題を投げかけると、AI同士が会議形式で議論してくれるチャットフローアプリです。現在は1種類の会議形式のみですが、今後3種類の会議フローから選べるように拡張予定です。',
-    link: '#',
+    desc: '「ユーザーが質問してAIが答える」FAQボット。訓練校の制度に関するFAQ型 ＋ 学習サポート機能。',
+    link: 'https://udify.app/chat/sebiWtYsa8rya6H3',
   },
   {
     id: 'work-3',
     title: 'grill-me',
-    category: 'Dify / チャットフロー',
+    category: 'DIFY / チャットフロー',
     status: '制作中',
     image: null,
     imageClass: 'bg-grad-3',
     desc: 'ユーザーのアイデアや計画について、AIが1つずつ質問を重ねていくことで、内容を具体的に整理・言語化していくチャットフロー型アプリです。',
+    link: '#',
+  },
+  {
+    id: 'work-4',
+    title: '職務経歴書作成AI',
+    category: 'Dify / チャットフロー',
+    status: '制作中',
+    image: null,
+    imageClass: 'bg-grad-4',
+    desc: 'ジョブカードや履歴書、過去の職務経歴書をもとに、見やすい形式の職務経歴書を自動で作成するチャットフロー型のAIアプリです。',
+    link: '#',
+  },
+  {
+    id: 'work-5',
+    title: 'AI会議室',
+    category: 'Dify / チャットフロー',
+    status: '制作中',
+    image: null,
+    imageClass: 'bg-grad-1',
+    desc: 'お題を投げかけると、AI同士が会議形式で議論してくれるチャットフローアプリです。現在は1種類の会議形式のみですが、今後3種類の会議フローから選べるように拡張予定です。',
     link: '#',
   },
 ];
@@ -261,6 +282,10 @@ function renderModal(index) {
     const statusBadgeHtml = work.status
       ? `<span class="work-status-badge modal-status-badge">${work.status}</span>`
       : '';
+    // presentationLink（企画資料など）があれば別タブで開くボタンを追加する
+    const presentationLinkHtml = work.presentationLink
+      ? `<a href="${work.presentationLink}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">企画資料を見る</a>`
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
@@ -269,6 +294,7 @@ function renderModal(index) {
                 <p>${work.desc}</p>
                 <div class="modal-links">
                     <a href="${work.link}" class="btn btn-primary">View Project</a>
+                    ${presentationLinkHtml}
                 </div>
                 <div class="modal-navigation">
                     <button class="btn btn-nav js-modal-prev" ${index === 0 ? 'disabled' : ''}>&larr; Prev</button>
