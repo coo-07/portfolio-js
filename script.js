@@ -175,6 +175,7 @@ const worksData = [
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
     presentationLink: 'docs/inventory-presentation.html',
+    demoNote: '※デモ用パスワード：000000（管理者・スタッフ共通）',
   },
   {
     id: 'work-2',
@@ -291,12 +292,17 @@ function renderModal(index) {
     const viewProjectAttrs = isExternalLink
       ? ' target="_blank" rel="noopener noreferrer"'
       : '';
+    // デモ用パスワードなどの補足テキスト（あれば説明文の下・ボタンの上に表示する）
+    const demoNoteHtml = work.demoNote
+      ? `<p class="work-demo-note">${work.demoNote}</p>`
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
                 <p class="work-category" style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">${work.category}</p>
                 <h3>${work.title}</h3>
                 <p>${work.desc}</p>
+                ${demoNoteHtml}
                 <div class="modal-links">
                     <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>View Project</a>
                     ${presentationLinkHtml}

@@ -1151,6 +1151,12 @@ Section
   line-height: 1.8;
 }
 
+/* デモ用パスワードなどの補足テキスト（説明文より控えめに表示） */
+.modal-content-inner p.work-demo-note {
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
 /* モーダル内のリンクボタン群 */
 .modal-links {
   display: flex;
