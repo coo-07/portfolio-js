@@ -889,17 +889,18 @@ Section
 */
 .works-grid {
   display: grid;
-  /* スキルグリッドと同様に auto-fit で列数を自動調整 */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  /* スキルグリッドと同様に auto-fit で列数を自動調整（PCでは1行に2〜3枚程度収まる幅） */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.75rem;
 }
 
 /* 作品カード（ボタン要素として実装し、クリックでモーダルを開きます） */
 .work-card {
   display: block;
   width: 100%;
+  aspect-ratio: 4 / 3; /* 横長ではなく、正方形に近い比率にします */
   text-align: left;
-  border: none;
+  border: 1px solid rgba(255, 90, 31, 0.16); /* カード全体にもオレンジ系のアクセントをうっすらと */
   cursor: pointer;
   border-radius: var(--border-radius);
   overflow: hidden; /* カード内の要素がはみ出ないようにします */
@@ -909,26 +910,31 @@ Section
   font-family: inherit;
   color: inherit;
   outline: none;
-  position: relative; /* バッジを絶対配置するための基準 */
+  position: relative; /* バッジ・上部アクセントラインを絶対配置するための基準 */
   padding: 1.5rem; /* アイコンボックス・テキストを囲む共通の余白 */
+}
+
+/* カード上部のアクセントライン（Skillsセクションの丸いアイコン背景=--grad-coolと同じトーンに統一） */
+.work-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--grad-cool);
+  transition: height 0.3s ease;
 }
 
 .work-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgba(255, 90, 31, 0.32);
 }
 
-/* 作品サムネイル画像エリア（アイコンより一回り大きい程度の小さな正方形ボックス。カード左上に配置） */
-.work-thumb {
-  width: 96px;
-  height: 96px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 16px;
-  background: var(--color-icon-frame);
-  margin-bottom: 1.25rem;
+/* ホバー時はアクセントラインを少し太くして強調します */
+.work-card:hover::before {
+  height: 10px;
 }
 
 /* 「制作中」などのステータスバッジ（カード右上に配置） */
@@ -956,14 +962,24 @@ Section
   right: 16px;
 }
 
-/* 画像がまだ用意されていない作品のアイコン表示（正方形・角丸） */
+/* 画像がまだ用意されていない作品のアイコン表示（.work-card の直接の子。
+   固定pxではなくカード幅に対する割合で指定し、カードが縮小すれば
+   アイコンも自然に小さくなるようにします） */
 .icon-square {
+  container-type: inline-size; /* 絵文字のフォントサイズを自分の幅基準で決めるためのコンテナ */
+  width: 34%;
+  aspect-ratio: 1 / 1; /* 幅に連動して高さも正方形を保ちます */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border-radius: 18px;
   transition: transform 0.5s ease;
+}
+
+/* カード内では次のテキストとの間に余白を持たせます（モーダル内は中央配置のため対象外） */
+.work-card > .icon-square {
+  margin-bottom: 1.25rem;
 }
 
 /* ホバーで少しズームイン */
@@ -973,8 +989,6 @@ Section
 
 /* 在庫管理アプリのヘッダーロゴと同じ、青グラデーション角丸アイコン */
 .icon-square--brand {
-  width: 72px;
-  height: 72px;
   background: var(--grad-icon-blue);
   box-shadow: 0 8px 20px rgba(47, 95, 224, 0.28);
 }
@@ -987,23 +1001,30 @@ Section
 
 /* 画像素材が未定のプロジェクト用の仮アイコン（絵文字を統一スタイルで表示） */
 .icon-square--placeholder {
-  width: 72px;
-  height: 72px;
   background: #ffffff;
   border: 1px solid var(--color-border);
-  font-size: 2rem;
 }
 
-/* サムネイルに実画像（<img>）を使う場合のスタイル */
-.work-thumb img {
-  width: 100%;
-  height: 100%;
+/* 絵文字本体（親 .icon-square の幅を基準にした cqw でスケールします。
+   container-type は親 .icon-square 側で宣言しているため、自分自身ではなく
+   子要素にフォントサイズを指定する必要があります） */
+.icon-emoji {
+  font-size: 42cqw;
+  line-height: 1;
+}
+
+/* サムネイルに実画像（<img>）を使う場合のスタイル（.work-card の直接の子） */
+.work-photo {
+  width: 34%;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  margin-bottom: 1.25rem;
   object-fit: cover; /* 画像の縦横比を保ちながらエリアを埋める（はみ出した部分は非表示） */
   display: block;
   transition: transform 0.5s ease;
 }
 
-.work-card:hover .work-thumb img {
+.work-card:hover .work-photo {
   transform: scale(1.05); /* icon-square と同じホバーアニメーション */
 }
 
@@ -1025,10 +1046,10 @@ Section
 }
 
 @media screen and (min-width: 1024px) {
-  /* PCではカードの最小幅を広げます */
+  /* PCではカード間の余白を少し広げます（カード幅自体は260px程度を維持） */
   .works-grid {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
   }
 }
 
@@ -1149,28 +1170,12 @@ Section
   object-fit: cover; /* <img> のとき：縦横比を保ちながらエリアを埋めます */
 }
 
-/* アイコン表示専用スタイル（image が null の作品に適用。横幅いっぱいの帯にはせず、左上に小さく配置） */
-.modal-thumb-placeholder {
-  width: 128px;
-  height: 128px;
-  aspect-ratio: unset;
-  border-radius: 18px;
-  margin-bottom: 1.5rem; /* 小さいボックスに合わせて、実画像用の2remより控えめに */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-icon-frame);
-}
-
-/* モーダル内はカード一覧より少し大きめのアイコンサイズにします */
-.modal-thumb-placeholder .icon-square--brand,
-.modal-thumb-placeholder .icon-square--placeholder {
-  width: 96px;
-  height: 96px;
-}
-
-.modal-thumb-placeholder .icon-square--placeholder {
-  font-size: 2.5rem;
+/* アイコン表示（image が null の作品に適用）。灰色の枠は挟まず、
+   .modal-thumb-wrapper の直接の子としてアイコン枠のみを配置します。
+   モーダル内はカード一覧より少し大きめのアイコンサイズにします */
+.modal-thumb-wrapper > .icon-square {
+  width: 112px;
+  margin-bottom: 1.5rem;
 }
 
 .modal-content-inner h3 {

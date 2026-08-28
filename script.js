@@ -252,7 +252,7 @@ function renderIconSquare(work) {
   if (work.iconType === 'brand-svg') {
     return `<div class="icon-square icon-square--brand">${inventoryIconSvg}</div>`;
   }
-  return `<div class="icon-square icon-square--placeholder" aria-hidden="true">${work.icon}</div>`;
+  return `<div class="icon-square icon-square--placeholder" aria-hidden="true"><span class="icon-emoji">${work.icon}</span></div>`;
 }
 
 // サムネイルの作品リストを表示する
@@ -264,8 +264,9 @@ if (worksGrid) {
   worksData.forEach((work, index) => {
     // console.log(work, index);
     // サムネイルの HTML を切り替える（実画像 or アイコン）
+    // .work-card の直接の子として配置する（間に灰色の枠のdivは挟みません）
     const thumbHtml = work.image
-      ? `<img src="${work.image}" alt="${work.title}のサムネイル">`
+      ? `<img class="work-photo" src="${work.image}" alt="${work.title}のサムネイル">`
       : renderIconSquare(work);
 
     // status（制作中など）があればバッジHTMLを作る
@@ -281,7 +282,7 @@ if (worksGrid) {
     card.dataset.index = index;
 
     card.innerHTML = `
-            <div class="work-thumb">${thumbHtml}</div>
+            ${thumbHtml}
             <div class="work-info">
                 <p class="work-category">${work.category}</p>
                 <h4 class="work-title">${work.title}</h4>
@@ -303,12 +304,12 @@ const modalContent = document.querySelector('.js-modal-content');
 let currentIndex = 0;
 
 // サムネイル HTML を生成するヘルパー関数
-// image があれば <img>、なければ小さいアイコンを中央配置した枠を返す
+// image があれば <img>、なければアイコン枠をそのまま返す（灰色の枠は挟みません）
 function renderThumb(work) {
   if (work.image) {
     return `<img class="modal-thumb" src="${work.image}" alt="${work.title}のサムネイル">`;
   }
-  return `<div class="modal-thumb modal-thumb-placeholder">${renderIconSquare(work)}</div>`;
+  return renderIconSquare(work);
 }
 
 // モーダルの中身を描画する関数
