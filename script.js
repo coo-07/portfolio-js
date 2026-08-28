@@ -160,10 +160,32 @@ if (pageTopBtn) {
  * ================================
  */
 
+// 在庫管理アプリのヘッダーロゴと同じSVGアイコン（青グラデーションの正方形の中に配置する）
+const inventoryIconSvg = `<svg class="icon-svg" viewBox="0 0 236.5 211" fill="none" aria-hidden="true" focusable="false">
+  <path
+    fill="white"
+    d="M1235 2188 c-29 -17 -1099 -873 -1116 -894 l-14 -17 0 -43 0 -44 27
+-27 28 -27 95 -4 95 -4 0 -480 0 -479 15 -29 c8 -16 24 -34 34 -40 l20 -10
+293 0 294 0 27 28 27 28 2 329 3 330 222 3 222 2 3 -334 3 -334 24 -26 24 -26
+301 0 300 0 28 27 28 27 0 492 0 492 96 4 97 4 28 32 29 32 0 29 c0 16 -3 37
+-6 46 -4 9 -82 79 -175 156 l-168 140 -3 255 -3 256 -28 24 -28 24 -148 0
+-148 0 -27 -25 -26 -24 0 -91 c0 -49 -4 -90 -8 -90 -5 0 -78 57 -163 127 -85
+70 -169 137 -188 150 l-34 23 -31 0 c-17 0 -40 -6 -51 -12z m269 -258 c114
+-93 215 -171 224 -171 33 -3 47 2 65 23 l17 20 0 119 0 120 103 -3 102 -3 5
+-255 c3 -140 7 -256 8 -257 7 -6 202 -168 261 -216 39 -32 71 -62 71 -68 l0
+-9 -89 0 -88 0 -27 -21 -26 -20 0 -493 0 -492 -12 -12 -12 -12 -243 0 -242 0
+-11 19 -10 20 0 321 0 321 -25 24 -24 25 -260 0 -260 0 -28 -24 -28 -24 -5
+-339 -5 -338 -255 0 -255 0 -5 497 -5 496 -24 26 -24 26 -94 0 -93 0 0 9 c0
+15 1057 861 1076 861 6 0 105 -76 218 -170z"
+    transform="translate(-10.5,220) scale(0.1,-0.1)"
+  />
+</svg>`;
+
 // 作品データを配列で管理する
 // DB や fetch('/api/works') から返ってくる JSON と同じ形式
 // image: 実画像のパス（例: 'images/work1.jpg'）または URL を指定。
-//        null にするとグラデーションのプレースホルダーが代わりに表示される。
+//        null の場合は icon（絵文字 or ブランドSVG）が代わりに表示される。
+// iconType: 'brand-svg'（在庫管理アプリの実ロゴ）| 'emoji'（画像素材が未定の仮アイコン）
 const worksData = [
   {
     id: 'work-1',
@@ -171,7 +193,7 @@ const worksData = [
     category: 'Web App',
     status: '完成',
     image: null,
-    imageClass: 'bg-grad-1',
+    iconType: 'brand-svg',
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
     presentationLink: 'docs/inventory-presentation.html',
@@ -183,7 +205,8 @@ const worksData = [
     category: 'DIFY / チャットフロー',
     status: '制作中',
     image: null,
-    imageClass: 'bg-grad-2',
+    iconType: 'emoji',
+    icon: '🤖',
     desc: '「ユーザーが質問してAIが答える」FAQボット。訓練校の制度に関するFAQ型 ＋ 学習サポート機能。',
     link: 'https://udify.app/chat/sebiWtYsa8rya6H3',
   },
@@ -193,7 +216,8 @@ const worksData = [
     category: 'DIFY / チャットフロー',
     status: '制作中',
     image: null,
-    imageClass: 'bg-grad-3',
+    iconType: 'emoji',
+    icon: '🔥',
     desc: 'ユーザーのアイデアや計画について、AIが1つずつ質問を重ねていくことで、内容を具体的に整理・言語化していくチャットフロー型アプリです。',
     link: '#',
   },
@@ -203,7 +227,8 @@ const worksData = [
     category: 'Dify / チャットフロー',
     status: '制作中',
     image: null,
-    imageClass: 'bg-grad-4',
+    iconType: 'emoji',
+    icon: '📄',
     desc: 'ジョブカードや履歴書、過去の職務経歴書をもとに、見やすい形式の職務経歴書を自動で作成するチャットフロー型のAIアプリです。',
     link: '#',
   },
@@ -213,11 +238,22 @@ const worksData = [
     category: 'Dify / チャットフロー',
     status: '制作中',
     image: null,
-    imageClass: 'bg-grad-1',
+    iconType: 'emoji',
+    icon: '🗣️',
     desc: 'お題を投げかけると、AI同士が会議形式で議論してくれるチャットフローアプリです。現在は1種類の会議形式のみですが、今後3種類の会議フローから選べるように拡張予定です。',
     link: '#',
   },
 ];
+
+// image が無い作品のアイコン（正方形の枠）を生成するヘルパー関数
+// brand-svg: 青グラデーションの角丸枠 + 在庫管理アプリのロゴSVG
+// emoji: 白背景の角丸枠 + 仮の絵文字（画像素材が用意され次第、差し替え予定）
+function renderIconSquare(work) {
+  if (work.iconType === 'brand-svg') {
+    return `<div class="icon-square icon-square--brand">${inventoryIconSvg}</div>`;
+  }
+  return `<div class="icon-square icon-square--placeholder" aria-hidden="true">${work.icon}</div>`;
+}
 
 // サムネイルの作品リストを表示する
 const worksGrid = document.querySelector('.js-works-grid');
@@ -227,10 +263,10 @@ if (worksGrid) {
   // forEach の引数: work = その要素のオブジェクト / index = 何番目か（0始まり）
   worksData.forEach((work, index) => {
     // console.log(work, index);
-    // サムネイルの HTML を切り替える（実画像 or グラデーション）
+    // サムネイルの HTML を切り替える（実画像 or アイコン）
     const thumbHtml = work.image
       ? `<img src="${work.image}" alt="${work.title}のサムネイル">`
-      : `<div class="thumb-placeholder ${work.imageClass}">Project ${index + 1}</div>`;
+      : renderIconSquare(work);
 
     // status（制作中など）があればバッジHTMLを作る
     const statusBadgeHtml = work.status
@@ -245,11 +281,12 @@ if (worksGrid) {
     card.dataset.index = index;
 
     card.innerHTML = `
-            <div class="work-thumb">${thumbHtml}${statusBadgeHtml}</div>
+            <div class="work-thumb">${thumbHtml}</div>
             <div class="work-info">
                 <p class="work-category">${work.category}</p>
                 <h4 class="work-title">${work.title}</h4>
             </div>
+            ${statusBadgeHtml}
         `;
 
     // グリッドの末尾にカードを追加する
@@ -266,12 +303,12 @@ const modalContent = document.querySelector('.js-modal-content');
 let currentIndex = 0;
 
 // サムネイル HTML を生成するヘルパー関数
-// image があれば <img>、なければグラデーション div を返す
+// image があれば <img>、なければ小さいアイコンを中央配置した枠を返す
 function renderThumb(work) {
   if (work.image) {
     return `<img class="modal-thumb" src="${work.image}" alt="${work.title}のサムネイル">`;
   }
-  return `<div class="modal-thumb modal-thumb-placeholder ${work.imageClass}">${work.title}</div>`;
+  return `<div class="modal-thumb modal-thumb-placeholder">${renderIconSquare(work)}</div>`;
 }
 
 // モーダルの中身を描画する関数

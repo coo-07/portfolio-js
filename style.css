@@ -35,6 +35,11 @@
   --grad-p3: linear-gradient(135deg, #ff9a5c 0%, #ff7a33 100%);
   --grad-p4: linear-gradient(135deg, #ff6b6b 0%, #d62839 100%);
 
+  /* 在庫管理アプリのヘッダーロゴと同じ青グラデーション（アイコンアクセント用） */
+  --grad-icon-blue: linear-gradient(135deg, #5b9dfb 0%, #2f5fe0 100%);
+  /* アイコンの背景に敷く薄いグレー（枠として使用） */
+  --color-icon-frame: #f2f4f7;
+
   /* --- UI設定 --- */
   /* フォントの種類。複数並べると、最初に見つかったフォントが使われます（フォールバック） */
   --font-base: 'Inter', 'Noto Sans JP', sans-serif;
@@ -173,20 +178,6 @@ Section
   display: flex;
   align-items: center; /* 縦方向の中央揃え */
   justify-content: center; /* 横方向の中央揃え */
-}
-
-/* 各プロジェクトカード用グラデーション背景 */
-.bg-grad-1 {
-  background: var(--grad-p1);
-}
-.bg-grad-2 {
-  background: var(--grad-p2);
-}
-.bg-grad-3 {
-  background: var(--grad-p3);
-}
-.bg-grad-4 {
-  background: var(--grad-p4);
 }
 
 /* ===== Buttons ボタン共通スタイル ===== */
@@ -918,6 +909,8 @@ Section
   font-family: inherit;
   color: inherit;
   outline: none;
+  position: relative; /* バッジを絶対配置するための基準 */
+  padding: 1.5rem; /* アイコンボックス・テキストを囲む共通の余白 */
 }
 
 .work-card:hover {
@@ -925,19 +918,24 @@ Section
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
 }
 
-/* 作品サムネイル画像エリア */
+/* 作品サムネイル画像エリア（アイコンより一回り大きい程度の小さな正方形ボックス。カード左上に配置） */
 .work-thumb {
-  width: 100%;
-  aspect-ratio: 16/10; /* 16:10の比率を保ちます */
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  position: relative; /* バッジを絶対配置するための基準 */
+  border-radius: 16px;
+  background: var(--color-icon-frame);
+  margin-bottom: 1.25rem;
 }
 
-/* 「制作中」などのステータスバッジ */
+/* 「制作中」などのステータスバッジ（カード右上に配置） */
 .work-status-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 16px;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
   font-size: 0.75rem;
@@ -958,21 +956,42 @@ Section
   right: 16px;
 }
 
-.thumb-placeholder {
-  width: 100%;
-  height: 100%;
+/* 画像がまだ用意されていない作品のアイコン表示（正方形・角丸） */
+.icon-square {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.5rem;
-  font-weight: 700;
+  flex-shrink: 0;
+  border-radius: 18px;
   transition: transform 0.5s ease;
 }
 
 /* ホバーで少しズームイン */
-.work-card:hover .thumb-placeholder {
+.work-card:hover .icon-square {
   transform: scale(1.05);
+}
+
+/* 在庫管理アプリのヘッダーロゴと同じ、青グラデーション角丸アイコン */
+.icon-square--brand {
+  width: 72px;
+  height: 72px;
+  background: var(--grad-icon-blue);
+  box-shadow: 0 8px 20px rgba(47, 95, 224, 0.28);
+}
+
+.icon-square--brand .icon-svg {
+  width: 46%;
+  height: 46%;
+  fill: #fff;
+}
+
+/* 画像素材が未定のプロジェクト用の仮アイコン（絵文字を統一スタイルで表示） */
+.icon-square--placeholder {
+  width: 72px;
+  height: 72px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  font-size: 2rem;
 }
 
 /* サムネイルに実画像（<img>）を使う場合のスタイル */
@@ -985,11 +1004,11 @@ Section
 }
 
 .work-card:hover .work-thumb img {
-  transform: scale(1.05); /* thumb-placeholder と同じホバーアニメーション */
+  transform: scale(1.05); /* icon-square と同じホバーアニメーション */
 }
 
 .work-info {
-  padding: 1.5rem;
+  padding: 0; /* 余白はカード側（.work-card）で統一して持たせます */
 }
 
 .work-category {
@@ -1120,7 +1139,7 @@ Section
   padding: 24px; /* モバイルでは少し狭めに */
 }
 
-/* モーダルのサムネイル共通スタイル（実画像・グラデーション両方に適用） */
+/* モーダルのサムネイル共通スタイル（実画像用） */
 .modal-thumb {
   width: 100%;
   aspect-ratio: 16/9;
@@ -1130,14 +1149,28 @@ Section
   object-fit: cover; /* <img> のとき：縦横比を保ちながらエリアを埋めます */
 }
 
-/* グラデーションプレースホルダー専用スタイル（image が null の作品に適用） */
+/* アイコン表示専用スタイル（image が null の作品に適用。横幅いっぱいの帯にはせず、左上に小さく配置） */
 .modal-thumb-placeholder {
+  width: 128px;
+  height: 128px;
+  aspect-ratio: unset;
+  border-radius: 18px;
+  margin-bottom: 1.5rem; /* 小さいボックスに合わせて、実画像用の2remより控えめに */
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.5rem;
-  font-weight: 700;
+  background: var(--color-icon-frame);
+}
+
+/* モーダル内はカード一覧より少し大きめのアイコンサイズにします */
+.modal-thumb-placeholder .icon-square--brand,
+.modal-thumb-placeholder .icon-square--placeholder {
+  width: 96px;
+  height: 96px;
+}
+
+.modal-thumb-placeholder .icon-square--placeholder {
+  font-size: 2.5rem;
 }
 
 .modal-content-inner h3 {
