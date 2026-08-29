@@ -1,26 +1,28 @@
 /**
  * ================================
  *
- * .site-bg（背景の丸い光）のオーブを、ページ全体に渡って複製配置する
+ * 背景の丸い光（オーブ）を、ページ全体に途切れず配置する
  * [やりたいこと]
- * .site-bg は今やドキュメント全体（ページ全体の高さ）を覆う1枚の背景。
- * HTMLに書かれているオーブ3つ（orb-1〜3）はページ最上部用の1セットだけなので、
- * このままではスクロールして下の方に行くと、オーブが画面内に1つも
- * （もしくは1つしか）ない範囲ができてしまう。
- * そこで、画面の高さ分ずつ「オーブ3つのセット」を下方向へ複製していき、
- * どの位置までスクロールしても、常に3つ程度のオーブが
- * 画面内に見えている状態を作る。
+ * .site-bg はドキュメント全体を覆う1枚の背景で、HTMLに書かれた3つの
+ * オーブ（.orb-master、実際には非表示の「型紙」）を元に、スクロールしても
+ * 常に3つ程度画面に見えるよう縦方向に複製配置する。
+ * オーブ自体はページのどこでも常に同じ見た目（ぼかした光の玉）のままで、
+ * Skills付近で透明にする・マスクするといった特別処理は一切行わない
+ * （そのためSkills内を白くする処理は .skills-white-panel が別途担当する。
+ * 　下の updateSkillsWhitePanel() 参照）。
  *
  * ================================
  */
 function populateSiteBgOrbs() {
-  // オーブは .site-bg 直下ではなく、ぼかし専用の内側ラッパー .site-bg-blur に入れる
-  // （blurとmaskを同じ要素に重ねないための構造。詳細はstyle.css/index.htmlのコメント参照）
   const siteBgBlur = document.querySelector('.site-bg-blur');
   if (!siteBgBlur) return;
 
   // 前回（リサイズ時など）に複製した分は一度リセットして作り直す
   siteBgBlur.querySelectorAll('.orb[data-generated="true"]').forEach((el) => el.remove());
+
+  // 型紙（非表示の.orb-master）からサイズ・背景・アニメーションを引き継ぐ。
+  const masters = [...siteBgBlur.querySelectorAll('.orb-master')];
+  if (masters.length === 0) return;
 
   const totalHeight = document.documentElement.scrollHeight;
   const viewportHeight = window.innerHeight;
@@ -29,22 +31,13 @@ function populateSiteBgOrbs() {
   const bandHeight = Math.max(viewportHeight * 0.7, 400);
   const bandCount = Math.ceil(totalHeight / bandHeight);
 
-  // 最初の3つ（HTMLに書かれているオーブ）を「1セット分の見た目」のテンプレートにする
-  const templates = [...siteBgBlur.querySelectorAll('.orb-1, .orb-2, .orb-3')];
-  if (templates.length === 0) return;
-
-  // 元の3つは先頭バンド(band 0)として扱い、位置を明示的に設定し直す
-  templates.forEach((template, idx) => {
-    template.style.top = `${(idx / templates.length) * bandHeight}px`;
-    template.style.bottom = 'auto';
-  });
-
-  // band 1以降は複製して配置する
-  for (let band = 1; band < bandCount; band++) {
-    templates.forEach((template, idx) => {
-      const clone = template.cloneNode(true);
+  for (let band = 0; band < bandCount; band++) {
+    masters.forEach((master, idx) => {
+      const clone = master.cloneNode(false);
+      clone.classList.remove('orb-master');
       clone.setAttribute('data-generated', 'true');
-      const top = band * bandHeight + (idx / templates.length) * bandHeight;
+      clone.style.visibility = 'visible';
+      const top = band * bandHeight + (idx / masters.length) * bandHeight;
       clone.style.top = `${top}px`;
       clone.style.bottom = 'auto';
       // animationDelay は上書きしない。同じ役割（orb-1/2/3）のオーブは
@@ -55,123 +48,135 @@ function populateSiteBgOrbs() {
   }
 }
 
-populateSiteBgOrbs();
-
 /**
  * ================================
  *
- * Skillsセクション付近でオーブを透明にする（オーブ1つ1つのopacityを計算する方式）
+ * Skillsセクションの背後の白いパネルを、斜め方向になめらかにフェードさせる
  * [やりたいこと]
- * About Me / Works ではオーブの光を見せ、Skillsセクションの範囲だけ光を消したい。
- * しかも右上から左下へ向かう斜め方向に、境目がどこか分からないくらい
- * 長い距離でじわっと変化させたい。
+ * Skills内を完全に白くしつつ、About Me / Worksとの境目を水平なラインではなく、
+ * 「左下から右上へ上がる斜めの平行線」にしたい。ただし境目は輪郭線として
+ * 見せず、白い背景そのものが斜めに溶けるように少しずつ消えていく見た目にする
+ * （消えた部分からは、下に漂うオーブの色がそのまま自然に透けて見える）。
+ * 上側の境目はAbout Meの内容とSkills見出しのちょうど中間、下側の境目は
+ * Skillsカード下端とWorks見出しのちょうど中間を通し、どちらのコンテンツにも
+ * 重ならない・ぼかさないようにする。上下の傾きは同じ角度の平行線にする。
  *
- * [以前の実装とその問題点]
- * 以前は .site-bg 全体に対して mask-image: linear-gradient(...) を使い、
- * 数十個のrgba()停止点を持つ非常になだらかな1枚の巨大グラデーションで
- * 透明度を変化させていた。しかしこの方法は、実際の25%ブラウザズームのような
- * 極端な縮小表示だと、数千pxにもわたる非常になだらかなアルファ変化を
- * ブラウザの描画エンジンが8bit精度でラスタライズしきれず、斜めの薄い
- * バンディング（縞）が本物の線のように見えてしまう問題があり、
- * STEPS（停止点の数）を減らしても解消しなかった。
- *
- * [今回の対策]
- * 数千pxにわたる巨大なCSSグラデーションを描画するのをやめ、
- * オーブ（.orb）1つ1つの opacity を、そのオーブの中心座標がSkillsセクションから
- * どれだけ離れているか（斜め方向）に応じてJS側で個別に計算してセットする方式にした。
- * opacityは要素単位の合成であり、長距離のアルファ勾配をラスタライズする
- * 必要がないため、上記のバンディングが原理的に発生しない。
+ * [仕組み]
+ * .skills-white-panel（不透明な白の帯）に mask-image: linear-gradient(...) を
+ * かけ、上端・下端をそれぞれ「透明→不透明」「不透明→透明」へなめらかに
+ * フェードさせる。グラデーションの角度は上下の境界線の傾き（tilt）に対して
+ * 垂直になるよう計算しているので、フェードそのものが斜めのラインに沿う。
+ * フェード幅は数十px程度と短いため、以前の「ページ全体を覆う巨大なmask」で
+ * 起きたグラデーションのバンディング問題はここでは発生しない。
+ * （以前試した、白いぼかし光を上から重ねる方式は、輪郭は隠せても
+ * 　別の白いボケ帯という新たな見た目の問題を生んでしまったため撤去した）。
  *
  * ================================
  */
-const MASK_ANGLE_DEG = 130;
-const maskAngleRad = (MASK_ANGLE_DEG * Math.PI) / 180;
-const maskSin = Math.sin(maskAngleRad);
-const maskCos = Math.cos(maskAngleRad);
-// なめらかなS字カーブ（Ken Perlinのsmootherstep）。速度・加速度とも0に収束するため、
-// 変化の継ぎ目が「マッハバンド」という目の錯覚で線のように見えるのを防ぐ。
+// フェード（不透明⇔透明の変化）にかける距離（px）。この幅の中で
+// 白背景が徐々に消えていく。背景のオーブ自体のfilter: blur(80px)による
+// ぼやけ方（中心から外側へ、かなり広い範囲でゆっくり透明になっていく）と
+// 同じくらいの柔らかさに見せるため、意図的に広めの値にしている。
+const SKILLS_FADE_WIDTH = 260;
+// フェードの中を何段階で区切るか。滑らかなS字カーブ（smootherstep）を
+// 複数の色停止点で近似することで、境目に「線」が見えるのを防ぐ
+// （2点だけの直線的なグラデーションだと、変化が始まる/終わる瞬間に
+// 　速度が不連続にジャンプし、そこがマッハバンドという目の錯覚で
+// 　薄い線のように見えてしまうため）。
+const SKILLS_FADE_STEPS = 8;
 const smootherstep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
-const ORB_BASE_OPACITY = 0.8; // .orb のCSS側opacityと合わせる（インラインで上書きするため）
 
-function applyOrbFade() {
+function updateSkillsWhitePanel() {
+  const about = document.querySelector('.about');
   const skills = document.querySelector('.skills');
-  const siteBg = document.querySelector('.site-bg');
-  const hero = document.querySelector('.hero');
-  if (!skills || !siteBg) return;
+  const skillsHeading = skills ? skills.querySelector('.section-title') : null;
+  const skillsGrid = document.querySelector('.skills-grid');
+  const works = document.querySelector('.works');
+  const worksHeading = works ? works.querySelector('.section-title') : null;
+  const panel = document.querySelector('.skills-white-panel');
+  if (!about || !skills || !skillsHeading || !skillsGrid || !worksHeading || !panel) return;
 
-  const width = siteBg.offsetWidth || window.innerWidth;
-  // ページ全体の高さ（スクロールしても変わらない、ドキュメント全体の高さ）
-  const height = document.documentElement.scrollHeight;
   const scrollY = window.scrollY || window.pageYOffset;
-  const rect = skills.getBoundingClientRect();
-  const skillsTop = rect.top + scrollY;
-  const skillsBottom = rect.bottom + scrollY;
-  const skillsHeight = skillsBottom - skillsTop;
-  const heroBottom = hero ? hero.getBoundingClientRect().bottom + scrollY : 0;
+  const docTop = (el) => el.getBoundingClientRect().top + scrollY;
+  const docBottom = (el) => el.getBoundingClientRect().bottom + scrollY;
 
-  // フェード区間の長さ。Skillsセクションの高さの2.5倍という長い距離をかけて
-  // 「ぼやっと」感じるくらいゆっくり変化させたいが、About MeやWorksの実際の高さより
-  // 長くしてしまうと、フェードの開始/終了地点がHeroやフッターにまではみ出してしまう。
-  // そのため、実際に使える範囲を超えないよう上限をかける。
-  const desiredSpan = skillsHeight * 2.5;
-  const spaceAboveSkills = skillsTop - heroBottom; // About Me セクションの高さ相当
-  const spaceBelowSkills = height - skillsBottom; // Works〜ページ末尾までの高さ
-  const transitionSpan = Math.max(
-    200,
-    Math.min(desiredSpan, spaceAboveSkills * 0.9, spaceBelowSkills * 0.9)
-  );
+  const aboutBottom = docBottom(about);
+  const skillsHeadingTop = docTop(skillsHeading);
+  const skillsCardsBottom = docBottom(skillsGrid);
+  const worksHeadingTop = docTop(worksHeading);
 
-  // CSSのlinear-gradient()と同じ計算式（グラデーションラインの全長）
-  const lineLength = Math.abs(width * maskSin) + Math.abs(height * maskCos);
+  const width = panel.offsetWidth || window.innerWidth;
 
-  // 座標(x, y)が、130deg方向のグラデーション軸上のどの位置(0〜1)に
+  // 上側の境目の中心：About Meの内容とSkills見出しのちょうど中間
+  const topCenter = (aboutBottom + skillsHeadingTop) / 2;
+  const topGap = Math.max(0, skillsHeadingTop - aboutBottom);
+  // 下側の境目の中心：Skillsカード下端とWorks見出しのちょうど中間
+  const bottomCenter = (skillsCardsBottom + worksHeadingTop) / 2;
+  const bottomGap = Math.max(0, worksHeadingTop - skillsCardsBottom);
+
+  // 傾きの強さ。画面幅に比例させ、はっきり斜めとわかる強さを狙う。
+  const desiredTilt = width * 0.22;
+  // ただし、上下どちらの隙間からもコンテンツにかからないよう、
+  // 隙間の広さ（フェード幅・安全マージン込み）で上限をクランプする。
+  // 上下は同じ角度の平行線にするため、狭い方の隙間に合わせて共通のtiltを使う。
+  const SAFETY = 16;
+  const maxTiltFromGap = (gap) => Math.max(0, gap - SKILLS_FADE_WIDTH - SAFETY * 2);
+  const tilt = Math.max(0, Math.min(desiredTilt, maxTiltFromGap(topGap), maxTiltFromGap(bottomGap)));
+
+  const margin = tilt / 2 + SKILLS_FADE_WIDTH / 2 + SAFETY;
+  const panelTop = topCenter - margin;
+  const panelHeight = bottomCenter + margin - panelTop;
+
+  panel.style.top = `${panelTop}px`;
+  panel.style.height = `${panelHeight}px`;
+
+  // 境界線（tilt分だけ傾いた直線）に対して垂直な向きを、
+  // CSSのlinear-gradientの角度（0deg=上向き、時計回り）で表す。
+  const angleDeg = 180 - (Math.atan2(tilt, width) * 180) / Math.PI;
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const sin = Math.sin(angleRad);
+  const cos = Math.cos(angleRad);
+  const lineLength = Math.abs(width * sin) + Math.abs(panelHeight * cos);
+
+  // パネル内のローカル座標(x, y)が、このグラデーションの何%地点に
   // 当たるかを求める（CSSのlinear-gradientの角度計算と同じ考え方）。
   const percentForXY = (x, y) => {
-    const proj = (x - width / 2) * maskSin - (y - height / 2) * maskCos;
-    return Math.max(0, Math.min(1, 0.5 + proj / lineLength));
+    const proj = (x - width / 2) * sin - (y - panelHeight / 2) * cos;
+    return Math.max(0, Math.min(100, (0.5 + proj / lineLength) * 100));
   };
 
-  const fadeOutStart = skillsTop - transitionSpan;
-  const fadeOutEnd = skillsTop;
-  const fadeInStart = skillsBottom;
-  const fadeInEnd = skillsBottom + transitionSpan;
+  // パネル内ローカル座標での、上辺・下辺の境界線の中心位置(x=width/2上)
+  const topLineY = topCenter - panelTop;
+  const bottomLineY = bottomCenter - panelTop;
+  const cx = width / 2;
 
-  // 各しきい値を、画面の水平中央(x = width/2)を基準にした%位置に変換しておく
-  const pFadeOutStart = percentForXY(width / 2, fadeOutStart);
-  const pFadeOutEnd = percentForXY(width / 2, fadeOutEnd);
-  const pFadeInStart = percentForXY(width / 2, fadeInStart);
-  const pFadeInEnd = percentForXY(width / 2, fadeInEnd);
+  // 上辺・下辺それぞれのフェード区間を、smootherstepでイージングした
+  // 複数の色停止点として書き出す（単純な2点直線グラデーションにしない）。
+  const stops = ['transparent 0%'];
+  for (let i = 0; i <= SKILLS_FADE_STEPS; i++) {
+    const t = i / SKILLS_FADE_STEPS;
+    const y = topLineY - SKILLS_FADE_WIDTH / 2 + t * SKILLS_FADE_WIDTH;
+    const alpha = smootherstep(t).toFixed(3);
+    stops.push(`rgba(0,0,0,${alpha}) ${percentForXY(cx, y).toFixed(2)}%`);
+  }
+  for (let i = 0; i <= SKILLS_FADE_STEPS; i++) {
+    const t = i / SKILLS_FADE_STEPS;
+    const y = bottomLineY - SKILLS_FADE_WIDTH / 2 + t * SKILLS_FADE_WIDTH;
+    const alpha = (1 - smootherstep(t)).toFixed(3);
+    stops.push(`rgba(0,0,0,${alpha}) ${percentForXY(cx, y).toFixed(2)}%`);
+  }
+  stops.push('transparent 100%');
 
-  document.querySelectorAll('.orb').forEach((orb) => {
-    // transform（浮遊アニメーション）はレイアウト上の位置に影響しないため、
-    // offsetTop/Left/Width/Height はアニメーション中も安定した値になる
-    const cx = orb.offsetLeft + orb.offsetWidth / 2;
-    const cy = orb.offsetTop + orb.offsetHeight / 2;
-    const p = percentForXY(cx, cy);
-
-    let alpha;
-    if (p <= pFadeOutStart || p >= pFadeInEnd) {
-      alpha = 1;
-    } else if (p >= pFadeOutEnd && p <= pFadeInStart) {
-      alpha = 0;
-    } else if (p < pFadeOutEnd) {
-      const t = (p - pFadeOutStart) / (pFadeOutEnd - pFadeOutStart);
-      alpha = 1 - smootherstep(t);
-    } else {
-      const t = (p - pFadeInStart) / (pFadeInEnd - pFadeInStart);
-      alpha = smootherstep(t);
-    }
-    orb.style.opacity = String(alpha * ORB_BASE_OPACITY);
-  });
+  const mask = `linear-gradient(${angleDeg.toFixed(2)}deg, ${stops.join(', ')})`;
+  panel.style.maskImage = mask;
+  panel.style.webkitMaskImage = mask;
 }
 
-applyOrbFade();
-// レイアウトが変わる可能性のあるタイミング（画面サイズ変更・フォント読み込み完了）で
-// オーブの配置とフェードの両方を再計算する
 function refreshSiteBg() {
   populateSiteBgOrbs();
-  applyOrbFade();
+  updateSkillsWhitePanel();
 }
+refreshSiteBg();
 window.addEventListener('load', refreshSiteBg);
 let siteBgResizeTimer;
 window.addEventListener('resize', () => {

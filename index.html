@@ -23,17 +23,25 @@
   <body>
     <!-- ページ全体を通してずっと背景に居続けるグラデーションブラー層。
          position: absolute でドキュメント全体を覆い、全セクションの背後に表示します。
-         このオーブ3つは先頭（ページ最上部）用のセットで、それより下の分は
-         script.js がスクロールしても常に3つ程度画面に見えるよう複製・配置します。
-         Skills付近で光を消す処理は、CSSのmask-imageではなくscript.js側で
-         各オーブのopacityを個別に計算する方式にしています（詳細はscript.js参照）。 -->
+         この3つ（.orb-master）は実際には表示されない「型紙」で、サイズ・背景・
+         アニメーション設定を読み取るためだけに存在します（visibility: hidden）。
+         実際に見える分（ページ最上部〜下まで）は script.js が、この型紙を元に
+         複製して配置します。オーブ自体はSkills付近でも透明にせず、常に同じ見た目
+         （ぼかした光の玉）のまま漂わせます。Skills内を白くするのは、この背景レイヤーの
+         「上」に重ねる .skills-white-panel（斜めに切り取った白いパネル）の役目です。 -->
     <div class="site-bg" aria-hidden="true">
       <div class="site-bg-blur">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+        <div class="orb orb-master orb-1"></div>
+        <div class="orb orb-master orb-2"></div>
+        <div class="orb orb-master orb-3"></div>
       </div>
     </div>
+    <!-- Skillsセクションの背後だけを覆う、不透明な白いパネル。
+         上下の辺は、script.jsが mask-image で「不透明な白→透明」へ斜め方向に
+         なめらかにフェードさせます（About Me / Worksとの境目が斜めになり、
+         かつ境目そのものが輪郭ではなく徐々に消えていくグラデーションになります）。
+         位置・傾き・フェードはscript.jsが .skills の実際の位置を見て計算します。 -->
+    <div class="skills-white-panel" aria-hidden="true"></div>
     <header class="header js-header">
       <div class="header-inner">
         <!-- ロゴ -->
@@ -122,7 +130,7 @@
           </div>
         </div>
       </section>
-      <section class="section skills bg-light" id="skills">
+      <section class="section skills" id="skills">
         <div class="container fade-in scroll-trigger">
           <h2 class="section-title">Skills</h2>
           <div class="skills-grid">

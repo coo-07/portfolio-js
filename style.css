@@ -142,19 +142,31 @@ Section
   background-color: var(--color-bg-light);
 }
 
-/* .skills は白背景そのものにも上下端でなだらかなフェードをかけます。
-   .site-bg 側の光はオーブ単位のopacityで滑らかに消えていますが、
-   白背景が上下端で「パッと」不透明になってしまうと、
-   その白い箱の輪郭自体が薄い区切り線のように見えてしまうため、
-   光のフェードと足並みを揃えて白背景側も透明→白へゆっくり変化させます。 */
-.skills.bg-light {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0) 0px,
-    rgba(255, 255, 255, 1) 100px,
-    rgba(255, 255, 255, 1) calc(100% - 100px),
-    rgba(255, 255, 255, 0) 100%
-  );
+/* .skills 自体は背景を持ちません（透明）。白い背景は .skills-white-panel という
+   別レイヤーが担当します（斜めに切り取った平行四辺形にするため）。
+   詳細は .skills-white-panel の定義とscript.jsのコメントを参照。 */
+
+/* Skills上部・下部の余白を通常より広めに確保します。
+   上側の斜め境界はAbout Meの内容とSkills見出しのちょうど中間を、
+   下側の斜め境界はSkillsカード下端とWorks見出しのちょうど中間を通したいので、
+   それぞれの中間位置に十分な傾き＋ぼかし幅を確保できるだけの余白が必要です。
+   （中身の位置自体は変えず、セクションの高さだけを広げています。
+   　なお.about側のpadding-bottomを広げても、.skillsもその分だけ
+   　一緒に下へ押し出されるだけで、両者の「隙間」自体は変わらないため、
+   　隙間を広げるにはSkills側のpadding-top/bottomを調整する必要があります）
+   セレクタをクラス2つ（例: .skills.section）にしているのは、後方にある
+   .section { padding: 100px 0 } （クラス1つ、同じ詳細度）に、
+   CSSの記述順の都合で上書きされてしまわないようにするためです。 */
+.skills.section {
+  padding-top: 380px;
+  padding-bottom: 320px;
+}
+
+@media screen and (min-width: 768px) {
+  .skills.section {
+    padding-top: 520px;
+    padding-bottom: 440px;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -572,12 +584,13 @@ Section
 
 /* ページ全体の背景：アニメーションするグラデーションの丸（オーブ）が入る層。
    body直下に1つだけ配置し、ドキュメント全体（position: absolute; height:100%）を覆います。
-   Skillsセクション付近だけ光を消し、About Me / Worksでは見えるようにしたいが、
-   これは mask-image（このレイヤーに対する巨大なCSSグラデーション）ではなく、
-   script.js側で各オーブ（.orb）1つ1つのopacityを個別に計算する方式にしています。
-   （以前はmask-imageを使っていましたが、数千pxにわたる非常になだらかな
-   アルファ変化を極端な縮小表示でラスタライズする際にバンディング＝薄い筋が
-   見えてしまう問題があったため撤去しました。詳細はscript.jsのコメント参照） */
+   オーブ自体はページのどこでも常に同じ見た目（ぼかした光の玉）で漂わせるだけで、
+   Skills付近を白くする処理はこのレイヤーの中では一切行いません
+   （透明度を変える・マスクするなどは行わない）。
+   Skillsを白くするのは、この上に重なる .skills-white-panel の役目です。
+   ※以前はSkills付近でオーブ自体を透明にする実装（mask-imageやopacity計算）を
+   試みましたが、極端な縮小表示でのバンディングや、オーブを分割した際の
+   継ぎ目が線のように見えてしまう問題が解決しなかったため撤去しました。 */
 .site-bg {
   position: absolute;
   top: 0;
@@ -597,6 +610,26 @@ Section
   filter: blur(80px);
 }
 
+/* Skillsセクションの背後だけを覆う、不透明な白いパネル。
+   .site-bg（オーブ）より手前・Skillsの文字やカードより奥に表示したいので、
+   z-indexは.site-bgと同じ-1にし、DOM上で.site-bgより後ろに書くことで
+   （同じz-index同士は後にあるものが上に重なる）確実に手前に来るようにしています。
+   上下の辺は、script.jsが mask-image: linear-gradient(...) を使って、
+   「不透明な白 → 透明」へ斜め方向になめらかにフェードさせています
+   （傾きは About Me/Works との境目と同じ角度）。clip-pathによる
+   くっきりした輪郭は使わず、パネル自体の透明度がなだらかに変化することで、
+   境目付近では下に漂うオーブの色がそのまま透けて見えるようにしています。
+   （以前試した「白いぼかし光を上に重ねる」方式は、輪郭自体は隠せても
+   別の白いボケ帯が新たに見えてしまう問題があったため撤去しました）。 */
+.skills-white-panel {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: var(--color-bg-light);
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* オーブ（背景の丸いグラデーション）の共通スタイル */
 .orb {
   position: absolute;
@@ -604,6 +637,13 @@ Section
   opacity: 0.8;
   /* orbFloat アニメーションを20秒かけて無限にループ */
   animation: orbFloat 20s infinite ease-in-out;
+}
+
+/* HTMLに書かれた3つの元オーブは「型紙」としてのみ使う（見た目には出さない）。
+   script.js が offsetWidth 等でサイズを読み取れるよう、display:none ではなく
+   visibility:hidden にしている（display:noneだとサイズが0になり読み取れない）。 */
+.orb-master {
+  visibility: hidden;
 }
 
 /* 各オーブの個別設定
