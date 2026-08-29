@@ -69,6 +69,7 @@ html {
 }
 
 body {
+  position: relative; /* .site-bg（position: absolute）をドキュメント全体基準で配置するため */
   font-family: var(--font-base);
   color: var(--color-text-main);
   background-color: var(--color-bg);
@@ -136,9 +137,24 @@ Section
   margin-bottom: 3rem;
 }
 
-/* .bg-light：背景を白にするセクションに付けるクラス */
+/* .bg-light：背景を白にするセクションに付けるクラス。 */
 .bg-light {
   background-color: var(--color-bg-light);
+}
+
+/* .skills は白背景そのものにも上下端でなだらかなフェードをかけます。
+   .site-bg 側の光はオーブ単位のopacityで滑らかに消えていますが、
+   白背景が上下端で「パッと」不透明になってしまうと、
+   その白い箱の輪郭自体が薄い区切り線のように見えてしまうため、
+   光のフェードと足並みを揃えて白背景側も透明→白へゆっくり変化させます。 */
+.skills.bg-light {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 1) 100px,
+    rgba(255, 255, 255, 1) calc(100% - 100px),
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 @media screen and (min-width: 768px) {
@@ -545,19 +561,25 @@ Section
    スマホで上下スクロールなしに画面いっぱいに見せたいときに使います。
 */
 .hero {
-  position: relative; /* 子要素の absolute 配置の基準点にします */
+  position: relative;
   height: 100vh;
   min-height: 600px; /* 高さの最低値。これより小さくなりません */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  overflow: hidden; /* 背景のオーブ（丸いグラデーション）がはみ出さないよう隠します */
 }
 
-/* ヒーロー背景：アニメーションするグラデーションの丸（オーブ）が入る層 */
-.hero-bg {
-  position: absolute; /* .hero を基準に左上から全体を覆います */
+/* ページ全体の背景：アニメーションするグラデーションの丸（オーブ）が入る層。
+   body直下に1つだけ配置し、ドキュメント全体（position: absolute; height:100%）を覆います。
+   Skillsセクション付近だけ光を消し、About Me / Worksでは見えるようにしたいが、
+   これは mask-image（このレイヤーに対する巨大なCSSグラデーション）ではなく、
+   script.js側で各オーブ（.orb）1つ1つのopacityを個別に計算する方式にしています。
+   （以前はmask-imageを使っていましたが、数千pxにわたる非常になだらかな
+   アルファ変化を極端な縮小表示でラスタライズする際にバンディング＝薄い筋が
+   見えてしまう問題があったため撤去しました。詳細はscript.jsのコメント参照） */
+.site-bg {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -565,19 +587,14 @@ Section
   background: var(--color-bg);
   z-index: -1; /* コンテンツより背面に配置 */
   overflow: hidden;
-  /* filter: blur でオーブをぼかして幻想的な背景を作ります */
+  pointer-events: none; /* 装飾用の背景なのでクリックを透過させます */
+}
+
+/* オーブをまとめてぼかす内側の層 */
+.site-bg-blur {
+  position: absolute;
+  inset: 0;
   filter: blur(80px);
-  /* mask-image：要素の下端をフェードアウトさせるマスク処理 */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 70%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 70%,
-    rgba(0, 0, 0, 0) 100%
-  );
 }
 
 /* オーブ（背景の丸いグラデーション）の共通スタイル */
@@ -592,6 +609,9 @@ Section
 /* 各オーブの個別設定
    vw = viewport width（画面幅に対する割合）を使うことで
    どのサイズの画面でも比率が保たれます */
+/* 各オーブの横位置は、隣のオーブと十分重なるように調整しています。
+   orb-1は-20vw〜40vw、orb-3は約20vw〜66vw、orb-2は50vw〜100vwと
+   隣同士が重なるようにし、境目に薄い縦の切れ目（帯）ができないようにしています。 */
 .orb-1 {
   width: 60vw;
   height: 60vw;
@@ -604,15 +624,15 @@ Section
   width: 50vw;
   height: 50vw;
   bottom: -10vw;
-  right: -10vw;
+  right: 0;
   background: var(--grad-p2);
   animation-delay: -5s; /* マイナスの値でアニメーションを途中から始めます */
 }
 .orb-3 {
-  width: 40vw;
-  height: 40vw;
+  width: 46vw;
+  height: 46vw;
   top: 30%;
-  left: 40%;
+  left: 20%;
   background: var(--grad-cool);
   animation-delay: -10s;
 }
@@ -838,27 +858,50 @@ Section
   gap: 1.5rem;
 }
 
-/* スキルカード */
+/* スキルカード（Worksカードと同じく上部にブランドカラーのアクセントラインを入れます） */
 .skill-card {
   background: var(--color-bg-light);
   padding: 2rem 1.5rem;
   border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 90, 31, 0.16); /* Worksカードと同様、カード全体にもうっすらアクセント */
+  overflow: hidden; /* 上部アクセントラインを角丸の内側に収めます */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  position: relative; /* 上部アクセントラインを絶対配置するための基準 */
+}
+
+/* カード上部のアクセントライン（Worksカードの .work-card::before と同じ --grad-cool） */
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--grad-cool);
+  transition: height 0.3s ease;
 }
 
 .skill-card:hover {
   transform: translateY(-5px); /* ホバーで少し浮き上がる */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-color: rgba(255, 90, 31, 0.32);
 }
 
-/* スキルアイコン（グラデーション丸背景） */
+.skill-card:hover::before {
+  height: 10px;
+}
+
+/* スキルアイコン（グラデーション丸背景。
+   Worksカード上部のアクセントライン(.work-card::before)と同じ --grad-cool を
+   ここでも直接指定し、両者が確実に同じ値を参照するようにします） */
 .skill-icon {
   width: 60px;
   height: 60px;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: #fff;
+  background: var(--grad-cool);
 }
 
 .skill-name {

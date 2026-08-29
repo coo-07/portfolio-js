@@ -21,6 +21,19 @@
     <script type="module" src="./script.js"></script>
   </head>
   <body>
+    <!-- ページ全体を通してずっと背景に居続けるグラデーションブラー層。
+         position: absolute でドキュメント全体を覆い、全セクションの背後に表示します。
+         このオーブ3つは先頭（ページ最上部）用のセットで、それより下の分は
+         script.js がスクロールしても常に3つ程度画面に見えるよう複製・配置します。
+         Skills付近で光を消す処理は、CSSのmask-imageではなくscript.js側で
+         各オーブのopacityを個別に計算する方式にしています（詳細はscript.js参照）。 -->
+    <div class="site-bg" aria-hidden="true">
+      <div class="site-bg-blur">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+      </div>
+    </div>
     <header class="header js-header">
       <div class="header-inner">
         <!-- ロゴ -->
@@ -58,13 +71,6 @@
     <main>
       <!--　↓ ページ全体の主要なコンテンツ -->
       <section class="hero" id="home">
-        <!-- 背景のグラデーション丸（オーブ） -->
-        <div class="hero-bg js-hero-bg">
-          <div class="orb orb-1"></div>
-          <div class="orb orb-2"></div>
-          <div class="orb orb-3"></div>
-        </div>
-
         <!-- メインテキスト -->
         <div class="hero-content fade-in-up">
           <p class="hero-subtitle">Web Design Trainee Portfolio</p>

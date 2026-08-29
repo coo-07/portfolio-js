@@ -1,6 +1,187 @@
 /**
  * ================================
  *
+ * .site-bg（背景の丸い光）のオーブを、ページ全体に渡って複製配置する
+ * [やりたいこと]
+ * .site-bg は今やドキュメント全体（ページ全体の高さ）を覆う1枚の背景。
+ * HTMLに書かれているオーブ3つ（orb-1〜3）はページ最上部用の1セットだけなので、
+ * このままではスクロールして下の方に行くと、オーブが画面内に1つも
+ * （もしくは1つしか）ない範囲ができてしまう。
+ * そこで、画面の高さ分ずつ「オーブ3つのセット」を下方向へ複製していき、
+ * どの位置までスクロールしても、常に3つ程度のオーブが
+ * 画面内に見えている状態を作る。
+ *
+ * ================================
+ */
+function populateSiteBgOrbs() {
+  // オーブは .site-bg 直下ではなく、ぼかし専用の内側ラッパー .site-bg-blur に入れる
+  // （blurとmaskを同じ要素に重ねないための構造。詳細はstyle.css/index.htmlのコメント参照）
+  const siteBgBlur = document.querySelector('.site-bg-blur');
+  if (!siteBgBlur) return;
+
+  // 前回（リサイズ時など）に複製した分は一度リセットして作り直す
+  siteBgBlur.querySelectorAll('.orb[data-generated="true"]').forEach((el) => el.remove());
+
+  const totalHeight = document.documentElement.scrollHeight;
+  const viewportHeight = window.innerHeight;
+  // 1セットを配置する間隔。画面の高さより少し狭くすることで、
+  // スクロール中も途切れずオーブが重なって見えるようにする
+  const bandHeight = Math.max(viewportHeight * 0.7, 400);
+  const bandCount = Math.ceil(totalHeight / bandHeight);
+
+  // 最初の3つ（HTMLに書かれているオーブ）を「1セット分の見た目」のテンプレートにする
+  const templates = [...siteBgBlur.querySelectorAll('.orb-1, .orb-2, .orb-3')];
+  if (templates.length === 0) return;
+
+  // 元の3つは先頭バンド(band 0)として扱い、位置を明示的に設定し直す
+  templates.forEach((template, idx) => {
+    template.style.top = `${(idx / templates.length) * bandHeight}px`;
+    template.style.bottom = 'auto';
+  });
+
+  // band 1以降は複製して配置する
+  for (let band = 1; band < bandCount; band++) {
+    templates.forEach((template, idx) => {
+      const clone = template.cloneNode(true);
+      clone.setAttribute('data-generated', 'true');
+      const top = band * bandHeight + (idx / templates.length) * bandHeight;
+      clone.style.top = `${top}px`;
+      clone.style.bottom = 'auto';
+      // animationDelay は上書きしない。同じ役割（orb-1/2/3）のオーブは
+      // 常にCSS側の元のdelay（0s/-5s/-10s）を共有し、全バンドで
+      // 完全に同じタイミング・同じ動きをするようにする（挙動を揃えて予測しやすくするため）。
+      siteBgBlur.appendChild(clone);
+    });
+  }
+}
+
+populateSiteBgOrbs();
+
+/**
+ * ================================
+ *
+ * Skillsセクション付近でオーブを透明にする（オーブ1つ1つのopacityを計算する方式）
+ * [やりたいこと]
+ * About Me / Works ではオーブの光を見せ、Skillsセクションの範囲だけ光を消したい。
+ * しかも右上から左下へ向かう斜め方向に、境目がどこか分からないくらい
+ * 長い距離でじわっと変化させたい。
+ *
+ * [以前の実装とその問題点]
+ * 以前は .site-bg 全体に対して mask-image: linear-gradient(...) を使い、
+ * 数十個のrgba()停止点を持つ非常になだらかな1枚の巨大グラデーションで
+ * 透明度を変化させていた。しかしこの方法は、実際の25%ブラウザズームのような
+ * 極端な縮小表示だと、数千pxにもわたる非常になだらかなアルファ変化を
+ * ブラウザの描画エンジンが8bit精度でラスタライズしきれず、斜めの薄い
+ * バンディング（縞）が本物の線のように見えてしまう問題があり、
+ * STEPS（停止点の数）を減らしても解消しなかった。
+ *
+ * [今回の対策]
+ * 数千pxにわたる巨大なCSSグラデーションを描画するのをやめ、
+ * オーブ（.orb）1つ1つの opacity を、そのオーブの中心座標がSkillsセクションから
+ * どれだけ離れているか（斜め方向）に応じてJS側で個別に計算してセットする方式にした。
+ * opacityは要素単位の合成であり、長距離のアルファ勾配をラスタライズする
+ * 必要がないため、上記のバンディングが原理的に発生しない。
+ *
+ * ================================
+ */
+const MASK_ANGLE_DEG = 130;
+const maskAngleRad = (MASK_ANGLE_DEG * Math.PI) / 180;
+const maskSin = Math.sin(maskAngleRad);
+const maskCos = Math.cos(maskAngleRad);
+// なめらかなS字カーブ（Ken Perlinのsmootherstep）。速度・加速度とも0に収束するため、
+// 変化の継ぎ目が「マッハバンド」という目の錯覚で線のように見えるのを防ぐ。
+const smootherstep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+const ORB_BASE_OPACITY = 0.8; // .orb のCSS側opacityと合わせる（インラインで上書きするため）
+
+function applyOrbFade() {
+  const skills = document.querySelector('.skills');
+  const siteBg = document.querySelector('.site-bg');
+  const hero = document.querySelector('.hero');
+  if (!skills || !siteBg) return;
+
+  const width = siteBg.offsetWidth || window.innerWidth;
+  // ページ全体の高さ（スクロールしても変わらない、ドキュメント全体の高さ）
+  const height = document.documentElement.scrollHeight;
+  const scrollY = window.scrollY || window.pageYOffset;
+  const rect = skills.getBoundingClientRect();
+  const skillsTop = rect.top + scrollY;
+  const skillsBottom = rect.bottom + scrollY;
+  const skillsHeight = skillsBottom - skillsTop;
+  const heroBottom = hero ? hero.getBoundingClientRect().bottom + scrollY : 0;
+
+  // フェード区間の長さ。Skillsセクションの高さの2.5倍という長い距離をかけて
+  // 「ぼやっと」感じるくらいゆっくり変化させたいが、About MeやWorksの実際の高さより
+  // 長くしてしまうと、フェードの開始/終了地点がHeroやフッターにまではみ出してしまう。
+  // そのため、実際に使える範囲を超えないよう上限をかける。
+  const desiredSpan = skillsHeight * 2.5;
+  const spaceAboveSkills = skillsTop - heroBottom; // About Me セクションの高さ相当
+  const spaceBelowSkills = height - skillsBottom; // Works〜ページ末尾までの高さ
+  const transitionSpan = Math.max(
+    200,
+    Math.min(desiredSpan, spaceAboveSkills * 0.9, spaceBelowSkills * 0.9)
+  );
+
+  // CSSのlinear-gradient()と同じ計算式（グラデーションラインの全長）
+  const lineLength = Math.abs(width * maskSin) + Math.abs(height * maskCos);
+
+  // 座標(x, y)が、130deg方向のグラデーション軸上のどの位置(0〜1)に
+  // 当たるかを求める（CSSのlinear-gradientの角度計算と同じ考え方）。
+  const percentForXY = (x, y) => {
+    const proj = (x - width / 2) * maskSin - (y - height / 2) * maskCos;
+    return Math.max(0, Math.min(1, 0.5 + proj / lineLength));
+  };
+
+  const fadeOutStart = skillsTop - transitionSpan;
+  const fadeOutEnd = skillsTop;
+  const fadeInStart = skillsBottom;
+  const fadeInEnd = skillsBottom + transitionSpan;
+
+  // 各しきい値を、画面の水平中央(x = width/2)を基準にした%位置に変換しておく
+  const pFadeOutStart = percentForXY(width / 2, fadeOutStart);
+  const pFadeOutEnd = percentForXY(width / 2, fadeOutEnd);
+  const pFadeInStart = percentForXY(width / 2, fadeInStart);
+  const pFadeInEnd = percentForXY(width / 2, fadeInEnd);
+
+  document.querySelectorAll('.orb').forEach((orb) => {
+    // transform（浮遊アニメーション）はレイアウト上の位置に影響しないため、
+    // offsetTop/Left/Width/Height はアニメーション中も安定した値になる
+    const cx = orb.offsetLeft + orb.offsetWidth / 2;
+    const cy = orb.offsetTop + orb.offsetHeight / 2;
+    const p = percentForXY(cx, cy);
+
+    let alpha;
+    if (p <= pFadeOutStart || p >= pFadeInEnd) {
+      alpha = 1;
+    } else if (p >= pFadeOutEnd && p <= pFadeInStart) {
+      alpha = 0;
+    } else if (p < pFadeOutEnd) {
+      const t = (p - pFadeOutStart) / (pFadeOutEnd - pFadeOutStart);
+      alpha = 1 - smootherstep(t);
+    } else {
+      const t = (p - pFadeInStart) / (pFadeInEnd - pFadeInStart);
+      alpha = smootherstep(t);
+    }
+    orb.style.opacity = String(alpha * ORB_BASE_OPACITY);
+  });
+}
+
+applyOrbFade();
+// レイアウトが変わる可能性のあるタイミング（画面サイズ変更・フォント読み込み完了）で
+// オーブの配置とフェードの両方を再計算する
+function refreshSiteBg() {
+  populateSiteBgOrbs();
+  applyOrbFade();
+}
+window.addEventListener('load', refreshSiteBg);
+let siteBgResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(siteBgResizeTimer);
+  siteBgResizeTimer = setTimeout(refreshSiteBg, 150);
+});
+
+/**
+ * ================================
+ *
  * ヘッダーのスクロール時のスタイル変更
  * [やりたいこと]
  * ページを少し下にスクロールしたら、ヘッダーの背景をすりガラス風に変化させる。
