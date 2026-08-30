@@ -628,6 +628,16 @@ function openModalFromHash() {
 
   currentIndex = index;
   renderModal(currentIndex);
+
+  // モーダルを閉じたときにWorks一覧（該当カード）が見えているように、
+  // 背景側のスクロール位置も合わせておく（モーダルの裏なので見た目には影響しない）
+  const card = worksGrid && worksGrid.querySelector(`[data-index="${index}"]`);
+  if (card) {
+    card.scrollIntoView({ block: 'center' });
+  } else {
+    const worksSection = document.getElementById('works');
+    if (worksSection) worksSection.scrollIntoView();
+  }
 }
 openModalFromHash();
 window.addEventListener('hashchange', openModalFromHash);
