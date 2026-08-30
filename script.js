@@ -382,7 +382,7 @@ const worksData = [
     image: null,
     iconType: 'brand-svg',
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。\n直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
-    link: 'https://coo-zaiko-kanri.vercel.app',
+    link: 'https://coo-zaiko-kanri.vercel.app/?from=portfolio',
     presentationLink: 'docs/portfolio_zaiko.html',
     presentationLinkLabel: '開発資料を見る',
     linksNote: '実際に操作したい方はアプリへ、開発の経緯を詳しく知りたい方は資料をご覧ください。',
