@@ -423,18 +423,6 @@ const worksData = [
     desc: 'ジョブカードや履歴書、過去の職務経歴書をもとに、見やすい形式の職務経歴書を自動で作成するチャットフロー型のAIアプリです。',
     link: '#',
   },
-  {
-    id: 'work-5',
-    title: 'AI会議室',
-    category: 'Dify / チャットフロー',
-    status: '制作中',
-    image: null,
-    iconType: 'emoji',
-    icon: '🗣️',
-    desc: '1つのお題について複数のAIキャラクターに議論させることで、多角的な視点や意見を得られるアプリです。\ngrill-meが1人のAIとアイデアを深掘りするのに対し、\nAI会議室は複数の立場からの意見を比較できる点が異なります。',
-    link: 'https://udify.app/chat/S0aIezDWx8xMD9lc',
-    linksNote: '※Dify上で動作する外部アプリのため、ポートフォリオへは開いたタブを閉じてお戻りください。',
-  },
 ];
 
 // image が無い作品のアイコン（正方形の枠）を生成するヘルパー関数
@@ -461,8 +449,8 @@ if (worksGrid) {
       ? `<img class="work-photo" src="${work.image}" alt="${work.title}のサムネイル">`
       : renderIconSquare(work);
 
-    // status（制作中など）があればバッジHTMLを作る
-    const statusBadgeHtml = work.status
+    // 「完成」は基本状態として扱い、バッジは出さない。未完成のものだけ目立たせる。
+    const statusBadgeHtml = work.status && work.status !== '完成'
       ? `<span class="work-status-badge">${work.status}</span>`
       : '';
 
@@ -510,7 +498,8 @@ function renderModal(index) {
   const work = worksData[index];
 
   if (work) {
-    const statusBadgeHtml = work.status
+    // 「完成」は基本状態として扱い、バッジは出さない。未完成のものだけ目立たせる。
+    const statusBadgeHtml = work.status && work.status !== '完成'
       ? `<span class="work-status-badge modal-status-badge">${work.status}</span>`
       : '';
     // presentationLink（企画資料など）があれば別タブで開くボタンを追加する
