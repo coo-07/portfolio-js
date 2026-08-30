@@ -375,6 +375,7 @@ const inventoryIconSvg = `<svg class="icon-svg" viewBox="0 0 236.5 211" fill="no
 const worksData = [
   {
     id: 'work-1',
+    slug: 'zaiko',
     title: 'やさしい在庫管理',
     category: 'Web App',
     status: '完成',
@@ -382,7 +383,10 @@ const worksData = [
     iconType: 'brand-svg',
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
-    presentationLink: 'docs/inventory-presentation.html',
+    linkLabel: 'アプリを見る',
+    presentationLink: 'docs/portfolio_zaiko.html',
+    presentationLinkLabel: '開発資料を見る',
+    linksNote: '実際に操作したい方はアプリへ、開発の経緯を詳しく知りたい方は資料をご覧ください。',
     demoNote: '※デモ用パスワード：000000（管理者・スタッフ共通）',
   },
   {
@@ -509,7 +513,7 @@ function renderModal(index) {
       : '';
     // presentationLink（企画資料など）があれば別タブで開くボタンを追加する
     const presentationLinkHtml = work.presentationLink
-      ? `<a href="${work.presentationLink}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">企画資料を見る</a>`
+      ? `<a href="${work.presentationLink}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">${work.presentationLinkLabel || '企画資料を見る'}</a>`
       : '';
     // work.link が外部URL（http/https）の場合のみ別タブで開く（# はサイト内遷移なので対象外）
     const isExternalLink = /^https?:\/\//.test(work.link);
@@ -520,6 +524,10 @@ function renderModal(index) {
     const demoNoteHtml = work.demoNote
       ? `<p class="work-demo-note">${work.demoNote}</p>`
       : '';
+    // ボタンの使い分けを案内する一言（あればボタンの直上に表示する）
+    const linksNoteHtml = work.linksNote
+      ? `<p class="work-links-note">${work.linksNote}</p>`
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
@@ -527,8 +535,9 @@ function renderModal(index) {
                 <h3>${work.title}</h3>
                 <p>${work.desc}</p>
                 ${demoNoteHtml}
+                ${linksNoteHtml}
                 <div class="modal-links">
-                    <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>View Project</a>
+                    <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>${work.linkLabel || 'View Project'}</a>
                     ${presentationLinkHtml}
                 </div>
                 <div class="modal-navigation">
@@ -606,3 +615,19 @@ if (modal) {
     }
   });
 }
+
+// ---- URL（#project=slug）からモーダルを直接開く ----
+// アプリ画面・資料ページの「←ポートフォリオに戻る」がこの形式のURLに
+// 遷移してくることで、Works一覧のトップではなく該当モーダルに直接戻れるようにする。
+function openModalFromHash() {
+  const match = location.hash.match(/^#project=(.+)$/);
+  if (!match) return;
+
+  const index = worksData.findIndex((w) => w.slug === match[1]);
+  if (index === -1) return;
+
+  currentIndex = index;
+  renderModal(currentIndex);
+}
+openModalFromHash();
+window.addEventListener('hashchange', openModalFromHash);

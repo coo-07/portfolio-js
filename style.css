@@ -1278,6 +1278,12 @@ Section
   margin-bottom: 1.5rem;
 }
 
+/* ボタンの使い分けを案内する一言（ボタン群のすぐ上に控えめに表示） */
+.modal-content-inner p.work-links-note {
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
 /* モーダル内のリンクボタン群 */
 .modal-links {
   display: flex;
