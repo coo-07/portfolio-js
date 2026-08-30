@@ -1272,6 +1272,11 @@ Section
   line-height: 1.8;
 }
 
+/* 説明文中の \n による改行を反映させる */
+.modal-content-inner p.work-desc {
+  white-space: pre-line;
+}
+
 /* デモ用パスワードなどの補足テキスト（説明文より控えめに表示） */
 .modal-content-inner p.work-demo-note {
   font-size: 0.85rem;

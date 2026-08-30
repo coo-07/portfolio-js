@@ -381,7 +381,7 @@ const worksData = [
     status: '完成',
     image: null,
     iconType: 'brand-svg',
-    desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
+    desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。\n直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
     presentationLink: 'docs/portfolio_zaiko.html',
     presentationLinkLabel: '開発資料を見る',
@@ -396,7 +396,7 @@ const worksData = [
     image: null,
     iconType: 'emoji',
     icon: '🤖',
-    desc: '架空のIT企業「にゃんだふる」の社内制度に関する質問と、HTML/CSS・JavaScript・TypeScript・Reactなど学習内容に関する質問の両方に答えられるFAQ型チャットボットです。社内規定の問い合わせ対応と、学習内容の復習サポートを1つのボットで兼ねています。',
+    desc: '・架空のIT企業「にゃんだふる」の社内制度に関する質問\n・HTML/CSS・JavaScript・TypeScript・Reactなど学習内容に関する質問\nの両方に答えられるFAQ型チャットボットです。\n社内規定の問い合わせ対応と、学習内容の復習サポートを1つのボットで兼ねています。',
     link: 'https://udify.app/chat/sebiWtYsa8rya6H3',
     linksNote: '※Dify上で動作する外部アプリのため、ポートフォリオへは開いたタブを閉じてお戻りください。',
   },
@@ -408,7 +408,7 @@ const worksData = [
     image: null,
     iconType: 'emoji',
     icon: '🔥',
-    desc: 'AIとの対話を通じて、アイデアを一緒に育てていく壁打ち用チャットボットです。作りたいものの方向性がまだ曖昧な段階では発想を広げる質問を、方向性が固まってきた段階では仕様や機能を詰める質問を投げかけ、思考の整理をサポートします。',
+    desc: 'AIとの対話を通じて、アイデアを一緒に育てていく壁打ち用チャットボットです。\n・作りたいものの方向性がまだ曖昧な段階では発想を広げる質問を、\n・方向性が固まってきた段階では仕様や機能を詰める質問を投げかけ、\n思考の整理をサポートします。',
     link: 'https://udify.app/chat/iwbtIklPH7PMsLyy',
     linksNote: '※Dify上で動作する外部アプリのため、ポートフォリオへは開いたタブを閉じてお戻りください。',
   },
@@ -431,7 +431,7 @@ const worksData = [
     image: null,
     iconType: 'emoji',
     icon: '🗣️',
-    desc: '1つのお題について複数のAIキャラクターに議論させることで、多角的な視点や意見を得られるアプリです。grill-meが1人のAIとアイデアを深掘りするのに対し、AI会議室は複数の立場からの意見を比較できる点が異なります。',
+    desc: '1つのお題について複数のAIキャラクターに議論させることで、多角的な視点や意見を得られるアプリです。\ngrill-meが1人のAIとアイデアを深掘りするのに対し、\nAI会議室は複数の立場からの意見を比較できる点が異なります。',
     link: 'https://udify.app/chat/S0aIezDWx8xMD9lc',
     linksNote: '※Dify上で動作する外部アプリのため、ポートフォリオへは開いたタブを閉じてお戻りください。',
   },
@@ -535,7 +535,7 @@ function renderModal(index) {
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
                 <p class="work-category" style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">${work.category}</p>
                 <h3>${work.title}</h3>
-                <p>${work.desc}</p>
+                <p class="work-desc">${work.desc}</p>
                 ${demoNoteHtml}
                 ${linksNoteHtml}
                 <div class="modal-links">
