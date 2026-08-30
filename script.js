@@ -383,7 +383,6 @@ const worksData = [
     iconType: 'brand-svg',
     desc: '商品の入出庫や在庫数をシンプルに管理できるWebアプリです。直感的な操作で、誰でも迷わず在庫状況を把握・更新できます。',
     link: 'https://coo-zaiko-kanri.vercel.app',
-    linkLabel: 'アプリを見る',
     presentationLink: 'docs/portfolio_zaiko.html',
     presentationLinkLabel: '開発資料を見る',
     linksNote: '実際に操作したい方はアプリへ、開発の経緯を詳しく知りたい方は資料をご覧ください。',
@@ -399,6 +398,7 @@ const worksData = [
     icon: '🤖',
     desc: '「ユーザーが質問してAIが答える」FAQボット。訓練校の制度に関するFAQ型 ＋ 学習サポート機能。',
     link: 'https://udify.app/chat/sebiWtYsa8rya6H3',
+    linksNote: '※Dify上で動作する外部アプリのため、ポートフォリオへは開いたタブを閉じてお戻りください。',
   },
   {
     id: 'work-3',
@@ -537,7 +537,7 @@ function renderModal(index) {
                 ${demoNoteHtml}
                 ${linksNoteHtml}
                 <div class="modal-links">
-                    <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>${work.linkLabel || 'View Project'}</a>
+                    <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>アプリを見る</a>
                     ${presentationLinkHtml}
                 </div>
                 <div class="modal-navigation">
