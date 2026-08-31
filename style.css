@@ -814,9 +814,11 @@ Section
 
 /* プロフィール画像のプレースホルダー（画像の代わりのカラーブロック） */
 .about-image-placeholder {
+  display: block;
   width: 100%;
   /* aspect-ratio：縦横比を指定します。4/5は縦長の長方形 */
   aspect-ratio: 4/5;
+  object-fit: cover;
   background: var(--grad-cool);
   border-radius: var(--border-radius-lg);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
