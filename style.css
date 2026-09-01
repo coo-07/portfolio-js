@@ -984,23 +984,13 @@ Section
    grid-template-columns で列の構成を指定します。
    モバイルファーストなので、まず1列（縦積み）で表示します。
 */
-/* About Me背景の赤みを少し和らげる、薄い白のオーバーレイ。
-   下のオーブのグラデーションは透けて見えたまま、
-   全体的な鮮やかさ・赤みだけを少し抑える。
-   z-indexは.site-bg(-1)より手前・コンテンツより奥にするため0にする
+/* .about::before（背景の赤みを和らげる薄い白のオーバーレイ）の
+   z-index基準を作るため、position: relativeを付ける
    （.aboutセクション自体はposition指定がなくstatic=通常のスタッキング
-   コンテキストなので、position: relativeを付けてz-index基準を作る）。 */
+   コンテキストのため）。z-indexは.site-bg(-1)より手前・
+   コンテンツより奥にするため0にする。 */
 .about {
   position: relative;
-}
-
-.about::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.22);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .about .container {
@@ -1237,13 +1227,37 @@ Section
   position: relative;
 }
 
+/* About Me/Works背景の赤みを少し和らげる、薄い白のオーバーレイ。
+   単純なalpha合成だと濃淡に関わらず均一に白っぽくなってしまうため、
+   mix-blend-mode: soft-lightで、明るい/薄い部分は柔らかく持ち上がる
+   一方、赤みが濃い部分（オーブの中心付近）は元の濃さがほぼ保たれる
+   ようにしている。
+   また、セクション上下端でオーバーレイが急に始まる/終わることで
+   くっきりした線に見えてしまうのを防ぐため、mask-imageで上下120px
+   をかけてtransparentへなめらかにフェードさせている。 */
+.about::before,
 .works::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.55);
+  mix-blend-mode: soft-light;
   pointer-events: none;
   z-index: 0;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 1) 120px,
+    rgba(0, 0, 0, 1) calc(100% - 120px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 1) 120px,
+    rgba(0, 0, 0, 1) calc(100% - 120px),
+    transparent 100%
+  );
 }
 
 .works .container {
