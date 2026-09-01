@@ -1153,14 +1153,14 @@ Section
 }
 
 .skill-name {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .skill-desc {
   color: var(--color-text-muted);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
 }
 
 /* 各カードの説明文の下に並ぶ、具体的な技術名のタグ（チップ）一覧 */
