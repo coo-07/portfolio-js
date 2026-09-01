@@ -163,7 +163,7 @@ Section
    打ち消している。 */
 .works-subtitle {
   color: var(--color-text-main);
-  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(255, 255, 255, 0.6);
   display: table;
   margin-left: auto;
   margin-right: auto;
@@ -1024,7 +1024,7 @@ Section
   /* ガラスパネルを外し、オレンジ〜レッドの背景に直接乗せているため、
      白のtext-shadowを添えて薄い背景色の上でも輪郭を保つ
      （色自体はbodyから継承した--color-text-mainのまま） */
-  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(255, 255, 255, 0.6);
   margin-bottom: 0.75rem;
 }
 
@@ -1076,6 +1076,11 @@ Section
 
 .profile-details dd {
   color: var(--color-text-main);
+}
+
+.profile-details dt,
+.profile-details dd {
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
 }
 
 @media screen and (min-width: 768px) {
