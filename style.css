@@ -1355,6 +1355,25 @@ Section
   font-weight: 700;
 }
 
+/* 各Worksカードのタイトル下に並ぶ、使用技術のタグ一覧 */
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.work-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(255, 122, 51, 0.08);
+  border: 1px solid rgba(255, 122, 51, 0.24);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
 /* 在庫管理アプリだけを目立たせるための特別なカード。
    worksData の featured: true のとき、JSがこのクラスを追加で付与する。 */
 .work-card--featured {
@@ -1379,6 +1398,10 @@ Section
   font-size: 1.5rem;
 }
 
+.work-card--featured .work-tags {
+  margin-top: 0.5rem;
+}
+
 @media screen and (min-width: 768px) {
   .work-card--featured {
     min-height: 220px;
@@ -1392,6 +1415,11 @@ Section
 
   .work-card--featured .work-title {
     font-size: 1.75rem;
+  }
+
+  .work-card--featured .work-tag {
+    font-size: 0.8rem;
+    padding: 4px 12px;
   }
 }
 

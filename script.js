@@ -378,6 +378,7 @@ const worksData = [
     slug: 'zaiko',
     title: 'やさしい在庫管理',
     featured: true,
+    tags: ['React', 'Supabase', 'Vercel'],
     category: 'Web App',
     status: '完成',
     image: null,
@@ -392,6 +393,7 @@ const worksData = [
   {
     id: 'work-2',
     title: '学習ナレッジ活用ボット',
+    tags: ['Dify', '生成AI'],
     category: 'DIFY / チャットフロー',
     status: '完成',
     image: null,
@@ -404,6 +406,7 @@ const worksData = [
   {
     id: 'work-3',
     title: 'grill-me',
+    tags: ['Dify', '生成AI'],
     category: 'DIFY / チャットフロー',
     status: '完成',
     image: null,
@@ -416,6 +419,7 @@ const worksData = [
   {
     id: 'work-4',
     title: '職務経歴書作成AI',
+    tags: ['Dify', '生成AI'],
     category: 'Dify / チャットフロー',
     status: '制作中',
     image: null,
@@ -434,6 +438,13 @@ function renderIconSquare(work) {
     return `<div class="icon-square icon-square--brand">${inventoryIconSvg}</div>`;
   }
   return `<div class="icon-square icon-square--placeholder" aria-hidden="true"><span class="icon-emoji">${work.icon}</span></div>`;
+}
+
+// 使用技術タグ一覧のHTMLを生成するヘルパー関数
+function renderWorkTags(work) {
+  if (!work.tags || work.tags.length === 0) return '';
+  const tagsHtml = work.tags.map((tag) => `<span class="work-tag">${tag}</span>`).join('');
+  return `<div class="work-tags">${tagsHtml}</div>`;
 }
 
 // サムネイルの作品リストを表示する
@@ -467,6 +478,7 @@ if (worksGrid) {
             <div class="work-info">
                 <p class="work-category">${work.category}</p>
                 <h4 class="work-title">${work.title}</h4>
+                ${renderWorkTags(work)}
             </div>
             ${statusBadgeHtml}
         `;
