@@ -129,12 +129,45 @@ Section
   letter-spacing: -0.02em;
 }
 
+/* About Meの見出しは.text-outline（縁取り文字）を使っている。文字幅に
+   フィットさせて中央寄せするためdisplay:table + margin:autoにしている
+   （inline-blockと違い、親にtext-align:centerがなくても崩れない）。 */
+.about-title {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Worksの見出しも同じ理由で.text-outlineを使っている。 */
+.works-title {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  /* すぐ下の.works-subtitleとの間隔を.section-titleの3rem（Skills/About Me
+     の見出し用）より詰めている */
+  margin-bottom: 0.75rem;
+}
+
 /* .section-subtitle：見出しの下にある補足テキスト */
 .section-subtitle {
   text-align: center;
   color: var(--color-text-muted);
   margin-top: -2rem;
   margin-bottom: 3rem;
+}
+
+/* Worksの説明文もガラスパネルなしでオレンジ〜レッドの背景に直接乗るため、
+   元のグレーより濃い色にし、白のtext-shadowを添えている。
+   .section-subtitleのmargin-top(-2rem)は見出しとの間隔用に調整された値
+   だったので、.works-titleの新しいmargin-bottomとの間隔に置き換えるため
+   打ち消している。 */
+.works-subtitle {
+  color: var(--color-text-main);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
 }
 
 /* .bg-light：背景を白にするセクションに付けるクラス。 */
@@ -747,35 +780,44 @@ Section
 .hero-subtitle {
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  /* ガラスパネルなしでオレンジ〜レッドの背景に直接乗るため、元のグレーより
+     濃い色にし、白のtext-shadowを添えて薄い背景色の上でも輪郭を保つ。 */
+  color: var(--color-text-main);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
   margin-bottom: 1rem;
   text-transform: uppercase; /* 文字を大文字にします */
+  /* 短い1文なので、中央寄せしつつ文字幅に合わせている */
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* ヒーロータイトルはモバイルではやや小さく */
-.hero-title {
-  font-family: var(--font-accent);
-  font-size: 2.8rem;
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
-  /* オレンジ〜レッドのグラデーション背景に文字が埋もれる箇所があるため、
-     すりガラス風のパネルを敷いて可読性を上げる。白の不透明度をかなり低くして
-     背景の色をしっかり透かしつつ、saturate/contrastを軽く効かせることで
-     ただのぼかしではなく「レンズを通して見た」ような屈折感・質感を出す。
-     さらに「歪んだレンズ」の質感を、重いSVG歪みフィルタ(feTurbulence/
-     feDisplacementMap等)を使わずに軽量な方法で近似している：
-     ① 単色の半透明ではなく、複数のradial-gradientを重ねて光の当たり方に
-     　 むら（明るい部分・暗い部分）を作る＝レンズ面での屈折の偏りを表現
-     ② 縁の左右に、暖色2色（黄〜オレンジ／赤〜ピンク）で色収差風のにじみを
-     　 持たせる。以前は不透明度が低く背景と同化して見えなかったため、
-     　 帯の幅（offset/blur）と不透明度を上げてはっきり「ズレ」と分かる
-     　 強さにしている。
-     いずれもbackdrop-filterと同じ合成負荷のみで、追加の重いフィルタ計算は
-     発生しないため、オーブのアニメーションと同時に動かしてもコストは低い。 */
+/* すりガラス調パネル（透明感 + 左右の色収差の縁）
+   Heroの見出しで確立したスタイルを共通クラス化したもの。見出し類は縁取り
+   文字（.text-outline）に切り替えたため、現在はAbout Meの本文段落と
+   Name/Location/Interestのボックスにのみ使用している。
+   白の不透明度をかなり低くして背景の色をしっかり透かしつつ、
+   saturate/contrastを軽く効かせることで、ただのぼかしではなく
+   「レンズを通して見た」ような屈折感・質感を出す。
+   さらに「歪んだレンズ」の質感を、重いSVG歪みフィルタ(feTurbulence/
+   feDisplacementMap等)を使わずに軽量な方法で近似している：
+   ① 単色の半透明ではなく、複数のradial-gradientを重ねて光の当たり方に
+   　 むら（明るい部分・暗い部分）を作る＝レンズ面での屈折の偏りを表現
+   ② 縁の左右に、暖色2色（黄〜オレンジ／赤〜ピンク）で色収差風のにじみを
+   　 持たせる。帯の幅（offset/blur）と不透明度を上げて、はっきり「ズレ」
+   　 と分かる強さにしている。
+   いずれもbackdrop-filterと同じ合成負荷のみで、追加の重いフィルタ計算は
+   発生しないため、オーブのアニメーションと同時に動かしてもコストは低い。
+   displayは要素ごとに用途が違う（見出しは文字幅にパネルを合わせて中央寄せ
+   したいのでdisplay:table + margin:auto、本文パラグラフは段落として
+   横幅いっぱいでよいのでblockのまま）ため、このクラス自体には含めず、
+   使う側で指定する。
+   paddingは、About Meのように複数のパネルが縦に並ぶ箇所（特にタブレット幅
+   などabout-gridが1カラムになる画面）でも窮屈にならないよう、控えめな値
+   にしている。 */
+.glass-panel {
   position: relative;
-  display: inline-block;
-  padding: 1.25rem 2rem;
+  padding: 1rem 1.5rem;
   background:
     radial-gradient(120% 140% at 12% 8%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 40%),
     radial-gradient(90% 110% at 92% 100%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 46%),
@@ -791,10 +833,44 @@ Section
     inset -14px 0 26px -4px rgba(230, 60, 100, 0.85);
 }
 
+/* 縁取り文字（Hero見出し／About Me見出し／Works見出し用）。
+   ガラスパネルをやめて背景を直接見せる代わりに、白い塗り+濃いグレーの
+   輪郭線で、オレンジ〜レッドのどの濃さの上でも読めるようにしている
+   （塗りが明るい背景に溶け込んでも、輪郭線のシルエットで文字として
+   認識できるのがポイント）。-webkit-text-strokeは継承されるので、
+   .hero-titleの中の.gradient-text（「Beautiful Design.」の
+   グラデーション塗り）にもこのクラスを付け直さなくても輪郭線だけ効く。 */
+.text-outline {
+  color: #fff;
+  -webkit-text-stroke: 2px var(--color-text-main);
+}
+
+/* ヒーロータイトルはモバイルではやや小さく */
+.hero-title {
+  font-family: var(--font-accent);
+  font-size: 2.8rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  /* 見出しの文字幅に合わせつつ中央寄せするため、display:table +
+     margin:autoにしている（.works-titleと同じ理由）。 */
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .hero-desc {
   font-size: 1rem;
-  color: var(--color-text-muted);
+  /* ガラスパネルなしでオレンジ〜レッドの背景に直接乗るため、元のグレーより
+     濃い色にし、白のtext-shadowを添えて薄い背景色の上でも輪郭を保つ。 */
+  color: var(--color-text-main);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
   margin-bottom: 2.5rem;
+  /* 短い1文なので、中央寄せしつつ文字幅に合わせている
+     （About Meの段落のような横幅いっぱいのblockにはしていない） */
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* スクロールを促すインジケーター（ページ下に向かってアニメーションする線） */
@@ -857,7 +933,6 @@ Section
 
   .hero-title {
     padding: 0.75rem 1.5rem;
-    margin-bottom: 0.75rem;
   }
 
   .hero-desc {
@@ -935,20 +1010,46 @@ Section
 
 .about-text h3 {
   font-size: 1.7rem;
-  margin-bottom: 1.5rem;
   line-height: 1.3;
+  /* ガラスパネルを外し、オレンジ〜レッドの背景に直接乗せているため、
+     白のtext-shadowを添えて薄い背景色の上でも輪郭を保つ
+     （色自体はbodyから継承した--color-text-mainのまま） */
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.75rem;
 }
 
 .about-text p {
-  color: var(--color-text-muted);
-  margin-bottom: 1rem;
+  color: var(--color-text-main);
+  /* パネル同士の間隔として詰めている（Hero・Worksのパネルと揃えた値） */
+  margin-bottom: 0.5rem;
 }
 
-/* プロフィール詳細（名前・所在地などの情報） */
+/* プロフィール詳細（名前・所在地などの情報）。.glass-panelを適用したので、
+   上の段落と区切るための線(border-top)は不要（パネル自体に枠があるため）。
+   他のパネル同士と間隔を揃えるため0.5remにしている。 */
 .profile-details {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.08); /* 薄い区切り線 */
+  margin-top: 0.5rem;
+}
+
+/* About Meで残した3枚のガラスパネル（本文2段落 + このプロフィール詳細）は、
+   スクロールでオーブの濃い赤が背後に来ると文字が読みにくくなっていたため、
+   .glass-panelの基本形（土台0.08）より白の不透明度を上げている。
+   ただし上げすぎると今度は隣の写真の濃いオレンジ〜赤から浮いて見えて
+   しまうため、「薄すぎず、濃い赤でも読みにくくならない」中間の濃さ
+   （土台0.2）にしている。
+   （このセレクタは.about-text p, .profile-detailsが元々.glass-panelより
+   詳細度が高いため、上書きに追加のクラスや!importantは不要）。 */
+.about-text p,
+.profile-details {
+  background:
+    radial-gradient(120% 140% at 12% 8%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 40%),
+    radial-gradient(90% 110% at 92% 100%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 46%),
+    rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 14px 0 26px -4px rgba(255, 196, 84, 0.6),
+    inset -14px 0 26px -4px rgba(230, 60, 100, 0.5);
 }
 
 /* dl（定義リスト）を grid で2列に（dt=用語、dd=説明） */
@@ -964,7 +1065,7 @@ Section
 }
 
 .profile-details dd {
-  color: var(--color-text-muted);
+  color: var(--color-text-main);
 }
 
 @media screen and (min-width: 768px) {
