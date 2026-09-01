@@ -1336,6 +1336,46 @@ Section
   font-weight: 700;
 }
 
+/* 在庫管理アプリだけを目立たせるための特別なカード。
+   worksData の featured: true のとき、JSがこのクラスを追加で付与する。 */
+.work-card--featured {
+  /* auto-fitのグリッドの中で、このカードだけ1行まるごと占有させる */
+  grid-column: 1 / -1;
+  aspect-ratio: auto;
+  min-height: 180px;
+  /* アイコンとテキストを縦積みではなく横並びに */
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.work-card--featured > .icon-square,
+.work-card--featured > .work-photo {
+  margin-bottom: 0;
+  width: 96px;
+  flex-shrink: 0;
+}
+
+.work-card--featured .work-title {
+  font-size: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .work-card--featured {
+    min-height: 220px;
+    gap: 2rem;
+  }
+
+  .work-card--featured > .icon-square,
+  .work-card--featured > .work-photo {
+    width: 120px;
+  }
+
+  .work-card--featured .work-title {
+    font-size: 1.75rem;
+  }
+}
+
 @media screen and (min-width: 1024px) {
   /* PCではカード間の余白を少し広げます（カード幅自体は260px程度を維持） */
   .works-grid {

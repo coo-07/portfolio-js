@@ -377,6 +377,7 @@ const worksData = [
     id: 'work-1',
     slug: 'zaiko',
     title: 'やさしい在庫管理',
+    featured: true,
     category: 'Web App',
     status: '完成',
     image: null,
@@ -456,7 +457,7 @@ if (worksGrid) {
 
     // document.createElement() で新しい button 要素を作成する
     const card = document.createElement('button');
-    card.className = 'work-card js-modal-open';
+    card.className = 'work-card js-modal-open' + (work.featured ? ' work-card--featured' : '');
 
     // data-index に「配列の何番目か」を記録する（クリック時に使う）
     card.dataset.index = index;
