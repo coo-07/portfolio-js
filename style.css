@@ -479,11 +479,11 @@ Section
 
   .nav-list {
     flex-direction: row; /* 縦並び → 横並びに */
-    gap: 2rem;
+    gap: 2.5rem;
   }
 
   .nav-item a {
-    font-size: 0.95rem; /* モバイルの 1.5rem から通常サイズに戻す */
+    font-size: 1.05rem; /* モバイルの 1.5rem から通常サイズに戻す */
   }
 }
 
