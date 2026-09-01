@@ -1163,6 +1163,25 @@ Section
   font-size: 0.95rem;
 }
 
+/* 各カードの説明文の下に並ぶ、具体的な技術名のタグ（チップ）一覧 */
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.skill-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(255, 122, 51, 0.08);
+  border: 1px solid rgba(255, 122, 51, 0.24);
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
 @media screen and (min-width: 1024px) {
   /* PCでは余白をもう少し広げます */
   .skills-grid {
