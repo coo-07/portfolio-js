@@ -644,4 +644,45 @@ function openModalFromHash() {
   }
 }
 openModalFromHash();
+
+/**
+ * ================================
+ *
+ * ナビゲーションのアクティブ状態表示
+ * [やりたいこと]
+ * 現在スクロールして見ているセクション（About/Skills/Works）に
+ * 対応するヘッダーのナビリンクにだけ.activeクラスを付け、強調表示する。
+ * Heroセクションにいる間はどのリンクもアクティブにしない。
+ *
+ * ================================
+ */
+
+// アクティブ状態を監視したいセクション（id="about" 等）を取得
+const navSpySections = ['about', 'skills', 'works']
+  .map((id) => document.getElementById(id))
+  .filter(Boolean);
+
+// ヘッダーのナビリンク（.js-nav-link）
+const navSpyLinks = document.querySelectorAll('.js-nav-link');
+
+// rootMarginで監視範囲をヘッダー分だけ上に、下側も大きく狭めることで、
+// 「見出しがヘッダーの少し下に来たあたり」で切り替わる自然なタイミングにする
+const navSpyObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      navSpyLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
+    });
+  },
+  {
+    root: null,
+    rootMargin: '-100px 0px -60% 0px',
+    threshold: 0,
+  }
+);
+
+navSpySections.forEach((section) => navSpyObserver.observe(section));
 window.addEventListener('hashchange', openModalFromHash);

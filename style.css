@@ -381,6 +381,13 @@ Section
   color: var(--color-primary);
 }
 
+/* 現在スクロール中のセクションに対応するナビリンクを強調表示する
+   （script.jsのIntersectionObserverが.activeクラスを付け外しする） */
+.nav-item a.active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 /* ===== ハンバーガーメニューボタン =====
    モバイル時に表示するナビゲーション開閉ボタンです。
    3本線の「≡」に見えることからハンバーガーと呼ばれます。
