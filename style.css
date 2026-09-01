@@ -158,14 +158,14 @@ Section
    .section { padding: 100px 0 } （クラス1つ、同じ詳細度）に、
    CSSの記述順の都合で上書きされてしまわないようにするためです。 */
 .skills.section {
-  padding-top: 380px;
-  padding-bottom: 320px;
+  padding-top: 180px;
+  padding-bottom: 150px;
 }
 
 @media screen and (min-width: 768px) {
   .skills.section {
-    padding-top: 520px;
-    padding-bottom: 440px;
+    padding-top: 250px;
+    padding-bottom: 200px;
   }
 }
 
