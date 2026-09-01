@@ -575,6 +575,10 @@ Section
 .hero {
   position: relative;
   height: 100vh;
+  height: 100dvh; /* モバイルブラウザのアドレスバー等で実際に見える高さに合わせる。
+    100vhのままだとアドレスバー表示中は実際の表示領域より大きく計算され、
+    bottom基準で配置しているscroll-indicatorが画面下にはみ出て見えなくなる。
+    対応ブラウザではこちらが優先され、非対応ブラウザは上のvhがそのまま使われる。 */
   min-height: 600px; /* 高さの最低値。これより小さくなりません */
   display: flex;
   align-items: center;
@@ -839,6 +843,35 @@ Section
   100% {
     transform: translateY(200%);
   } /* 下へと流れ落ちます */
+}
+
+/* iPhone SEなど縦に短い画面向け。widthではなくheightで判定するのは、
+   窮屈になる原因が画面の「縦」の余裕不足だから（横向きの短い画面でも
+   同じ問題が起きうる）。View Worksボタンのすぐ下にSCROLLの文字が
+   重なる／その下の縦線が画面下にはみ出て見えなくなる問題を、
+   ヒーロー内の余白を詰めてscroll-indicatorとの間隔を確保することで防ぐ。 */
+@media screen and (max-height: 700px) {
+  .hero-subtitle {
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-title {
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-desc {
+    margin-bottom: 1.25rem;
+  }
+
+  .scroll-indicator {
+    bottom: 16px;
+    gap: 6px;
+  }
+
+  .scroll-line {
+    height: 24px;
+  }
 }
 
 @media screen and (min-width: 768px) {
