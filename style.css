@@ -984,6 +984,30 @@ Section
    grid-template-columns で列の構成を指定します。
    モバイルファーストなので、まず1列（縦積み）で表示します。
 */
+/* About Me背景の赤みを少し和らげる、薄い白のオーバーレイ。
+   下のオーブのグラデーションは透けて見えたまま、
+   全体的な鮮やかさ・赤みだけを少し抑える。
+   z-indexは.site-bg(-1)より手前・コンテンツより奥にするため0にする
+   （.aboutセクション自体はposition指定がなくstatic=通常のスタッキング
+   コンテキストなので、position: relativeを付けてz-index基準を作る）。 */
+.about {
+  position: relative;
+}
+
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about .container {
+  position: relative;
+  z-index: 1;
+}
+
 .about-grid {
   display: grid;
   /* モバイル時：1fr（1列）で縦に積み重ねます */
@@ -1209,6 +1233,24 @@ Section
    10. Works Section
    制作実績セクション
 */
+.works {
+  position: relative;
+}
+
+.works::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.works .container {
+  position: relative;
+  z-index: 1;
+}
+
 .works-grid {
   display: grid;
   /* スキルグリッドと同様に auto-fit で列数を自動調整（PCでは1行に2〜3枚程度収まる幅） */
