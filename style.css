@@ -126,7 +126,7 @@ Section
   font-weight: 400;
   text-align: center;
   margin-bottom: 3rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.18em;
 }
 
 /* About Meの見出しは.text-outline（縁取り文字）を使っている。文字幅に
@@ -208,7 +208,7 @@ Section
   }
 
   .section-title {
-    font-size: 2.5rem; /* 文字も大きく */
+    font-size: 2.7rem; /* 文字も大きく */
   }
 }
 
@@ -360,7 +360,7 @@ Section
 /* サイトロゴ */
 .logo a {
   font-family: var(--font-accent);
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 400;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -490,7 +490,7 @@ Section
   }
 
   .nav-item a {
-    font-size: 1.05rem; /* モバイルの 1.5rem から通常サイズに戻す */
+    font-size: 1.2rem; /* モバイルの 1.5rem から通常サイズに戻す */
   }
 }
 
@@ -1128,7 +1128,7 @@ Section
 */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
 }
 
@@ -1269,7 +1269,7 @@ Section
   display: grid;
   /* スキルグリッドと同様に auto-fit で列数を自動調整（PCでは1行に2〜3枚程度収まる幅） */
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.75rem;
+  gap: 2.5rem;
 }
 
 /* 作品カード（ボタン要素として実装し、クリックでモーダルを開きます） */
@@ -1495,7 +1495,7 @@ Section
   /* PCではカード間の余白を少し広げます（カード幅自体は260px程度を維持） */
   .works-grid {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
+    gap: 2.5rem;
   }
 }
 
