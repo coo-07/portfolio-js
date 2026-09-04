@@ -1501,7 +1501,7 @@ Section
 
 @media screen and (min-width: 1024px) {
   .work-card--featured {
-    max-width: 75%;
+    max-width: 65%;
     margin-left: auto;
     margin-right: auto;
   }
