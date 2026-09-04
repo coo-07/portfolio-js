@@ -360,7 +360,7 @@ Section
 /* サイトロゴ */
 .logo a {
   font-family: var(--font-accent);
-  font-size: 1.7rem;
+  font-size: 1.9rem;
   font-weight: 400;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -490,7 +490,7 @@ Section
   }
 
   .nav-item a {
-    font-size: 1.2rem; /* モバイルの 1.5rem から通常サイズに戻す */
+    font-size: 1.35rem; /* モバイルの 1.5rem から通常サイズに戻す */
   }
 }
 
@@ -1215,7 +1215,16 @@ Section
   }
 
   .skill-card {
-    padding: 2.5rem 2rem;
+    padding: 3.5rem 2.5rem;
+  }
+
+  .skill-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .skill-name {
+    font-size: 1.5rem;
   }
 }
 
@@ -1269,7 +1278,7 @@ Section
   display: grid;
   /* スキルグリッドと同様に auto-fit で列数を自動調整（PCでは1行に2〜3枚程度収まる幅） */
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2.5rem;
+  gap: 3rem;
 }
 
 /* 作品カード（ボタン要素として実装し、クリックでモーダルを開きます） */
@@ -1495,7 +1504,7 @@ Section
   /* PCではカード間の余白を少し広げます（カード幅自体は260px程度を維持） */
   .works-grid {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2.5rem;
+    gap: 3rem;
   }
 }
 
