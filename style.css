@@ -1501,9 +1501,14 @@ Section
 
 @media screen and (min-width: 1024px) {
   .work-card--featured {
-    max-width: 65%;
+    max-width: 58%;
     margin-left: auto;
     margin-right: auto;
+    /* .works-gridのgap(2rem)はそのままに、featuredカード直下の
+       縦間隔だけを4割ほど詰めるため、負のmargin-bottomで相殺する
+       （0.8rem = 2remの4割）。横方向（3枚のカード同士）の間隔には
+       影響しない。 */
+    margin-bottom: -0.8rem;
   }
 }
 
