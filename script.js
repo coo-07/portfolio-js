@@ -394,12 +394,12 @@ const worksData = [
       normal: {
         href: 'sample-data/tanaka-shoten-sample.xlsx',
         download: '田中商店_サンプルデータ.xlsx',
-        label: 'サンプルデータをダウンロード',
+        label: 'サンプルデータをダウンロード（正常データ）',
       },
       error: {
         href: 'sample-data/tanaka-shoten-error-sample.xlsx',
         download: '田中商店_サンプルデータ_エラー体験用.xlsx',
-        label: '体験用データをダウンロード（あえてエラーになるデータです）',
+        label: 'サンプルデータをダウンロード（あえてエラーになるデータ）',
       },
     },
   },
