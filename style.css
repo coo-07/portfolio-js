@@ -1633,7 +1633,7 @@ Section
   width: 100%;
   aspect-ratio: 16/9;
   border-radius: var(--border-radius);
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   display: block; /* <img> のデフォルト inline による余白を消します */
   object-fit: cover; /* <img> のとき：縦横比を保ちながらエリアを埋めます */
 }
@@ -1643,18 +1643,18 @@ Section
    モーダル内はカード一覧より少し大きめのアイコンサイズにします */
 .modal-thumb-wrapper > .icon-square {
   width: 112px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .modal-content-inner h3 {
   font-size: 1.6rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .modal-content-inner p {
   color: var(--color-text-muted);
-  margin-bottom: 1.5rem;
-  line-height: 1.8;
+  margin-bottom: 1rem;
+  line-height: 1.65;
 }
 
 /* 説明文中の \n による改行を反映させる */
@@ -1665,7 +1665,7 @@ Section
 /* デモ用パスワードなどの補足テキスト（説明文より控えめに表示） */
 .modal-content-inner p.work-demo-note {
   font-size: 0.85rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 /* ボタンの使い分けを案内する一言（ボタン群のすぐ上に控えめに表示） */
@@ -1679,30 +1679,29 @@ Section
   display: flex;
   gap: 1rem;
   flex-wrap: wrap; /* モバイルで折り返しを許可 */
-  margin-top: 2rem;
+  margin-top: 1.25rem;
 }
 
 /* サンプルデータダウンロードのエリア（ボタン群より控えめなテキストリンク風デザイン） */
 .modal-sample-data {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px dashed rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .modal-sample-data-title {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-main);
-  margin: 0;
+  margin: 0 0 0.15rem; /* 説明文との間隔を詰める（以前の約半分） */
 }
 
 .modal-sample-data-desc {
   font-size: 0.8rem;
   color: var(--color-text-muted);
-  margin: -0.2rem 0 0;
+  margin: 0 0 0.5rem;
 }
 
 .sample-data-links {
@@ -1733,8 +1732,8 @@ Section
 .modal-navigation {
   display: flex;
   justify-content: space-between;
-  margin-top: 3rem;
-  padding-top: 2rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -1762,7 +1761,7 @@ Section
 
 @media screen and (min-width: 768px) {
   .modal-content {
-    padding: 40px; /* 余白を広げます */
+    padding: 32px 40px; /* 左右は広めに、上下は詰めてスクロールなしで収まりやすくする */
   }
 
   .modal-content-inner h3 {

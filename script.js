@@ -561,7 +561,7 @@ function renderModal(index) {
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
-                <p class="work-category" style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">${work.category}</p>
+                <p class="work-category" style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.3rem; text-transform: uppercase;">${work.category}</p>
                 <h3>${work.title}</h3>
                 <p class="work-desc">${work.desc}</p>
                 ${demoNoteHtml}
