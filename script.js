@@ -399,7 +399,9 @@ const worksData = [
       error: {
         href: 'sample-data/tanaka-shoten-error-sample.xlsx',
         download: '田中商店_サンプルデータ_エラー体験用.xlsx',
-        label: 'サンプルデータをダウンロード（あえてエラーになるデータ）',
+        icon: '⚠️',
+        label: 'サンプルデータをダウンロード',
+        labelSuffix: '（あえてエラーになるデータ）',
       },
     },
   },
@@ -550,8 +552,10 @@ function renderModal(index) {
       ? `<div class="modal-sample-data">
                     <p class="modal-sample-data-title">📥 サンプルデータで試す</p>
                     <p class="modal-sample-data-desc">${work.sampleData.description}</p>
-                    <a href="${work.sampleData.normal.href}" download="${work.sampleData.normal.download}" class="sample-data-link">${work.sampleData.normal.label}</a>
-                    <a href="${work.sampleData.error.href}" download="${work.sampleData.error.download}" class="sample-data-link">${work.sampleData.error.label}</a>
+                    <div class="sample-data-links">
+                        <a href="${work.sampleData.normal.href}" download="${work.sampleData.normal.download}" class="sample-data-link">${work.sampleData.normal.label}</a>
+                        <a href="${work.sampleData.error.href}" download="${work.sampleData.error.download}" class="sample-data-link">${work.sampleData.error.icon} ${work.sampleData.error.label}<span class="sample-data-link-suffix">${work.sampleData.error.labelSuffix}</span></a>
+                    </div>
                 </div>`
       : '';
     modalContent.innerHTML = `
