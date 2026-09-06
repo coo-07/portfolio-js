@@ -1160,7 +1160,7 @@ Section
 */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 1.5rem;
 }
 
@@ -1202,8 +1202,8 @@ Section
    Worksカード上部のアクセントライン(.work-card::before)と同じ --grad-cool を
    ここでも直接指定し、両者が確実に同じ値を参照するようにします） */
 .skill-icon {
-  width: 60px;
-  height: 60px;
+  width: 72px;
+  height: 72px;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: #fff;
@@ -1247,12 +1247,12 @@ Section
   }
 
   .skill-card {
-    padding: 3.5rem 2.5rem;
+    padding: 2.25rem 2.75rem;
   }
 
   .skill-icon {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
   }
 
   .skill-name {
