@@ -1158,6 +1158,12 @@ Section
    minmax(280px, 1fr) は「最小280px、最大は残りのスペースいっぱい」という意味です。
    モバイルでは1列、タブレットでは2列、PCでは3列…と自動的に変わります。
 */
+/* Skillsセクションだけ、共有の .container (max-width: 1100px) より広げる。
+   #skills で絞り込むことで About / Works の .container には影響しない。 */
+#skills .container {
+  max-width: 1300px;
+}
+
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -1249,8 +1255,9 @@ Section
 }
 
 @media screen and (min-width: 1024px) {
-  /* PCでは余白をもう少し広げます */
+  /* PCでは余白をもう少し広げ、カードも横長にします */
   .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2rem;
   }
 
