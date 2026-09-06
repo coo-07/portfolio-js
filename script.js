@@ -389,6 +389,19 @@ const worksData = [
     presentationLinkLabel: '開発資料を見る',
     linksNote: '実際に操作したい方はアプリへ、開発の経緯を詳しく知りたい方は資料をご覧ください。',
     demoNote: '※デモ用パスワード：000000（管理者・スタッフ共通）',
+    sampleData: {
+      normal: {
+        href: 'sample-data/tanaka-shoten-sample.xlsx',
+        download: '田中商店_サンプルデータ.xlsx',
+        label: 'サンプルデータをダウンロード',
+      },
+      error: {
+        href: 'sample-data/tanaka-shoten-error-sample.xlsx',
+        download: '田中商店_サンプルデータ_エラー体験用.xlsx',
+        label: 'エラー体験用データをダウンロード',
+        note: '※あえてエラーになるデータです',
+      },
+    },
   },
   {
     id: 'work-2',
@@ -532,6 +545,15 @@ function renderModal(index) {
     const linksNoteHtml = work.linksNote
       ? `<p class="work-links-note">${work.linksNote}</p>`
       : '';
+    // サンプルデータのダウンロードリンク（あれば「アプリを見る」ボタン群の下に表示する）
+    const sampleDataHtml = work.sampleData
+      ? `<div class="modal-sample-data">
+                    <p class="modal-sample-data-title">📥 サンプルデータで試す</p>
+                    <a href="${work.sampleData.normal.href}" download="${work.sampleData.normal.download}" class="sample-data-link">${work.sampleData.normal.label}</a>
+                    <a href="${work.sampleData.error.href}" download="${work.sampleData.error.download}" class="sample-data-link">${work.sampleData.error.label}</a>
+                    <p class="sample-data-note">${work.sampleData.error.note}</p>
+                </div>`
+      : '';
     modalContent.innerHTML = `
             <div class="modal-content-inner">
                 <div class="modal-thumb-wrapper">${renderThumb(work)}${statusBadgeHtml}</div>
@@ -544,6 +566,7 @@ function renderModal(index) {
                     <a href="${work.link}" class="btn btn-primary"${viewProjectAttrs}>アプリを見る</a>
                     ${presentationLinkHtml}
                 </div>
+                ${sampleDataHtml}
                 <div class="modal-navigation">
                     <button class="btn btn-nav js-modal-prev" ${index === 0 ? 'disabled' : ''}>&larr; Prev</button>
                     <!-- worksData.length で配列の件数を取得する（Object.keys().length が不要） -->
