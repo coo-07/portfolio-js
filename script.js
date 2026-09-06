@@ -496,6 +496,7 @@ if (worksGrid) {
                 ${renderWorkTags(work)}
             </div>
             ${statusBadgeHtml}
+            <span class="work-click-badge" aria-hidden="true">クリック</span>
         `;
 
     // グリッドの末尾にカードを追加する

@@ -1328,10 +1328,11 @@ Section
   height: 10px;
 }
 
-/* 「制作中」などのステータスバッジ（カード右上に配置） */
+/* 「制作中」などのステータスバッジ（カード右上に配置）。
+   .work-click-badge と同じ角に来るカードでは重ならないよう、下にずらす。 */
 .work-status-badge {
   position: absolute;
-  top: 16px;
+  top: 52px;
   right: 16px;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
@@ -1341,6 +1342,46 @@ Section
   border-radius: 20px;
   z-index: 2;
   letter-spacing: 0.02em;
+}
+
+/* クリック誘導用の吹き出しバッジ（カード右上、常時表示）。
+   .work-card は overflow: hidden のため、カードの外にはみ出す位置（負のtop等）は
+   使わず、カード内側に収めた上でしっぽだけが右上の角を指すようにする。 */
+.work-click-badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: var(--grad-brand);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 3;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 12px rgba(255, 122, 51, 0.4);
+  transition: transform 0.3s ease;
+  pointer-events: none; /* カード本体（button）のクリックを妨げない */
+}
+
+/* 吹き出しのしっぽ（カード右上の角を指す小さな三角形。
+   カードの overflow: hidden で切れないよう、バッジの内側に収まる範囲で配置） */
+.work-click-badge::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #d62839;
+  transform: rotate(-45deg);
+}
+
+/* ホバー時に軽くバウンドしてクリックを誘導する */
+.work-card:hover .work-click-badge {
+  transform: translateY(-3px) scale(1.08);
 }
 
 /* モーダル内のサムネイルラッパー（バッジの位置基準） */
