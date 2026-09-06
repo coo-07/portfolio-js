@@ -352,8 +352,8 @@ Section
 
 /* ヘッダーの内部レイアウト（ロゴとナビを両端に配置） */
 .header-inner {
-  width: 90%;
-  max-width: 1100px;
+  width: 94%;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex; /* flexboxで横並びに */
   justify-content: space-between; /* ロゴとナビを両端に */
