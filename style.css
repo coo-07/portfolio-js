@@ -1198,21 +1198,29 @@ Section
   height: 10px;
 }
 
+/* アイコンと見出しを横並びにする行 */
+.skill-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
 /* スキルアイコン（グラデーション丸背景。
    Worksカード上部のアクセントライン(.work-card::before)と同じ --grad-cool を
    ここでも直接指定し、両者が確実に同じ値を参照するようにします） */
 .skill-icon {
-  width: 72px;
-  height: 72px;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  width: 48px;
+  height: 48px;
+  font-size: 1rem;
+  flex-shrink: 0; /* 見出しが長くてもアイコンが潰れないように */
   color: #fff;
   background: var(--grad-cool);
 }
 
 .skill-name {
   font-size: 1.35rem;
-  margin-bottom: 1rem;
+  margin: 0;
   font-weight: 700;
 }
 
@@ -1251,8 +1259,9 @@ Section
   }
 
   .skill-icon {
-    width: 88px;
-    height: 88px;
+    width: 56px;
+    height: 56px;
+    font-size: 1.15rem;
   }
 
   .skill-name {
