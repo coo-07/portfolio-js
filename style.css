@@ -334,7 +334,10 @@ Section
   width: 100%;
   z-index: 100;
   padding: 24px 0;
-  transition: var(--transition);
+  box-shadow: none; /* 通常時は影なし。.scrolledで付く影をtransitionで滑らかに出すための起点 */
+  transition:
+    var(--transition),
+    box-shadow 0.2s ease;
 }
 
 /* スクロール時にJavaScriptで付与される .scrolled クラスのスタイル
@@ -343,7 +346,7 @@ Section
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(10px);
   padding: 18px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -374,6 +377,8 @@ Section
 }
 
 .nav-item a {
+  position: relative; /* 下線（::after）の位置基準 */
+  display: inline-block;
   font-weight: 500;
   font-size: 1.5rem; /* モバイルのナビリンクは大きく表示 */
 }
@@ -381,11 +386,34 @@ Section
   color: var(--color-primary);
 }
 
+/* ホバー時に左から右へ伸びる下線。scaleX(0)→scaleX(1)をtransformでアニメーションさせる */
+.nav-item a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.nav-item a:hover::after {
+  transform: scaleX(1);
+}
+
 /* 現在スクロール中のセクションに対応するナビリンクを強調表示する
    （script.jsのIntersectionObserverが.activeクラスを付け外しする） */
 .nav-item a.active {
   color: var(--color-primary);
   font-weight: 700;
+}
+
+/* activeなリンクの下線は常時表示のまま（ホバーの有無に関わらず） */
+.nav-item a.active::after {
+  transform: scaleX(1);
 }
 
 /* ===== ハンバーガーメニューボタン =====
